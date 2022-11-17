@@ -37,7 +37,7 @@ services:
       - ewm-db
       - stats-server
     environment:
-      - DB_NAME=ewm-main
+      - DB_NAME=ewm_main
       - POSTGRES_USER=ewm
       - POSTGRES_PASSWORD=ewm
       - DB_HOST=ewm-db
