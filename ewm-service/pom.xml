@@ -8,10 +8,10 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>explore-with-me-main</artifactId>
+    <artifactId>ewm-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>Explore With Me Main</name>
+    <name>ewm-service</name>
 
     <dependencies>
         <dependency>
