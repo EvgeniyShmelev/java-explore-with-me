@@ -9,9 +9,13 @@ services:
     depends_on:
       - stats-db
     environment:
-     # - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm-stat
-      - SPRING_DATASOURCE_USERNAME=ewm
-      - SPRING_DATASOURCE_PASSWORD=ewm
+      - DB_NAME=stats_server
+      - POSTGRES_USER=ewm
+      - POSTGRES_PASSWORD=ewm
+      - DB_HOST=stats-db
+      - DB_PORT=5432
+      #spring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+      #SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats-server
 
   stats-db:
     image: postgres:14-alpine
@@ -19,7 +23,7 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=ewm-stats
+      - POSTGRES_DB=stats_server
       - POSTGRES_USER=ewm
       - POSTGRES_PASSWORD=ewm
 
@@ -29,17 +33,23 @@ services:
     container_name: ewm_container
     ports:
       - "8080:8080"
+    depends_on:
+      - ewm-db
+      - stats-server
     environment:
-     # - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm_image
-      - SPRING_DATASOURCE_USERNAME=ewm
-      - SPRING_DATASOURCE_PASSWORD=ewm
-      - EWM_STAT_URL=http://stats-server:9090
+      - DB_NAME=ewm-main
+      - POSTGRES_USER=ewm
+      - POSTGRES_PASSWORD=ewm
+      - DB_HOST=ewm-db
+      - DB_PORT=5432
+      #- SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm-main
+      #spring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
 
   ewm-db:
     image: postgres:14-alpine
     container_name: ewm_db_container
     ports:
-      - "6540:5432"
+      - "6542:5432"
     environment:
       - POSTGRES_DB=ewm_main
       - POSTGRES_USER=ewm
