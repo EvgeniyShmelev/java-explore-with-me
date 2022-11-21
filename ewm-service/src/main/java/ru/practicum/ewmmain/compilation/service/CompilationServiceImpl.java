@@ -15,6 +15,7 @@ import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.repository.EventRepository;
 import ru.practicum.ewmmain.exception.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,16 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Добавление подборки: {}", newCompilationDto);
         Compilation newCompilation = compilationRepository.save(modelMapper.map(newCompilationDto, Compilation.class));
         // наверное надо наполнить подборку событиями. А то пустая получается
+        /*Collection<Long> eventsList = newCompilationDto.getEvents();
+        Collection<Event> events = new ArrayList<>();
+        for (Long eventId : eventsList) {
+            Event event = eventRepository.findById(eventId)
+                    .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+            events.add(event);
+        }
+        newCompilation.setEvents(events);
+        compilationRepository.save(newCompilation);*/
+        //Или нет?
         return modelMapper.map(newCompilation, CompilationDto.class);
     }
 
