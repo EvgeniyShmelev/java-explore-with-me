@@ -1,6 +1,7 @@
 package ru.practicum.ewmmain.compilation.model;
 
 
+import lombok.Data;
 import ru.practicum.ewmmain.events.model.Event;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "compilations")
+@Data
 public class Compilation {
     @Id
     @Column(name = "compilation_id")

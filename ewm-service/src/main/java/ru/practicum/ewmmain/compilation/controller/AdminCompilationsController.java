@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmain.compilation.dto.CompilationDto;
 import ru.practicum.ewmmain.compilation.dto.NewCompilationDto;
+import ru.practicum.ewmmain.compilation.service.CompilationService;
 
 @RestController
 @RequestMapping(path = "/admin/compilations")
@@ -33,10 +34,10 @@ public class AdminCompilationsController {
     }
 
     @PatchMapping("/{compId}/events/{eventId}")
-    public void addEventToCompilation(@PathVariable Long compId,
-                                      @PathVariable Long eventId) {
+    public CompilationDto addEventToCompilation(@PathVariable Long compId,
+                                                @PathVariable Long eventId) {
         log.info("Добавлено событие {} в подборку событий {}", eventId, compId);
-        compilationService.addEventToCompilation(compId, eventId);
+        return compilationService.addEventToCompilation(compId, eventId);
     }
 
     @DeleteMapping("/{compId}/pin")
@@ -46,8 +47,8 @@ public class AdminCompilationsController {
     }
 
     @PatchMapping("/{compId}/pin")
-    public void pinCompilation(@PathVariable Long compId) {
+    public CompilationDto pinCompilation(@PathVariable Long compId) {
         log.info("Подборка событий {} опубликована", compId);
-        compilationService.pinCompilation(compId);
+        return compilationService.pinCompilation(compId); // я тут запутался. Проверить что и где надо возвращать
     }
 }
