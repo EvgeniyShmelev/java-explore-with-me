@@ -6,10 +6,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmain.events.dto.AdminUpdateEventRequest;
 import ru.practicum.ewmmain.events.dto.EventFullDto;
+import ru.practicum.ewmmain.events.service.EventService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/admin/events")
@@ -19,9 +19,9 @@ public class AdminEventController {
     private final EventService eventService;
 
     @GetMapping
-    public Collection<EventFullDto> getAllEventsByAdmin(@RequestParam(required = false) List<Long> users,
-                                                        @RequestParam(required = false) List<String> states,
-                                                        @RequestParam(required = false) List<Long> categories,
+    public Collection<EventFullDto> getAllEventsByAdmin(@RequestParam(required = false) Collection<Long> users,
+                                                        @RequestParam(required = false) Collection<String> states,
+                                                        @RequestParam(required = false) Collection<Long> categories,
                                                         @RequestParam(required = false)
                                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                                         @RequestParam(required = false)
@@ -29,7 +29,14 @@ public class AdminEventController {
                                                         @RequestParam(defaultValue = "0") Integer from,
                                                         @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос списка событий");
-        return eventService.getAllByFilter(users, states, categories, rangeStart, rangeEnd, from, size);
+        return eventService.getAllByAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
+    }
+
+    @PutMapping("/{eventId}")
+    public EventFullDto adminUpdateEventRequest(@PathVariable Long eventId,
+                                                @RequestBody AdminUpdateEventRequest adminUpdateEventRequest) {
+        log.info("Обновлено событие: id: {} event: {}", eventId, adminUpdateEventRequest);
+        return eventService.updateByAdmin(eventId, adminUpdateEventRequest);
     }
 
     @PatchMapping("/{eventId}/publish")
@@ -41,13 +48,6 @@ public class AdminEventController {
     @PatchMapping("/{eventId}/reject")
     public EventFullDto rejectEvent(@PathVariable Long eventId) {
         log.info("Событие: {} отклонено", eventId);
-        return eventService.reject(eventId);
-    }
-
-    @PutMapping("/{eventId}")
-    public EventFullDto adminUpdateEventRequest(@PathVariable Long eventId,
-                                                @RequestBody AdminUpdateEventRequest adminUpdateEventRequest) {
-        log.info("Обновлено событие: id: {} event: {}", eventId, adminUpdateEventRequest);
-        return eventService.updateByAdmin(eventId, adminUpdateEventRequest);
+        return eventService.rejectDyAdmin(eventId);
     }
 }

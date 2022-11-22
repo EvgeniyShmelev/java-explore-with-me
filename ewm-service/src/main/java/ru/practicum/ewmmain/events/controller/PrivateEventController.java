@@ -7,6 +7,7 @@ import ru.practicum.ewmmain.events.dto.EventFullDto;
 import ru.practicum.ewmmain.events.dto.EventShortDto;
 import ru.practicum.ewmmain.events.dto.NewEventDto;
 import ru.practicum.ewmmain.events.dto.UpdateEventRequest;
+import ru.practicum.ewmmain.events.service.EventService;
 import ru.practicum.ewmmain.request.dto.ParticipantRequestDto;
 
 import javax.validation.constraints.Positive;

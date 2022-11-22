@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmain.events.dto.EventFullDto;
 import ru.practicum.ewmmain.events.dto.EventShortDto;
+import ru.practicum.ewmmain.events.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
@@ -28,7 +29,7 @@ public class PublicEventController {
 
     @GetMapping
     public Collection<EventShortDto> getAllById(@RequestParam(required = false) String text,
-                                                @RequestParam(required = false) Long[] categories,
+                                                @RequestParam(required = false) Collection<Long> categories,
                                                 @RequestParam(required = false) Boolean paid,
                                                 @RequestParam(required = false)
                                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
