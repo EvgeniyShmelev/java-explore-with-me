@@ -9,5 +9,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Request getByRequesterIdAndEventId(Long userId, Long eventId);
 
-    Collection<Request> getAllByRequesterId(Long id);
+    Collection<Request> getAllByRequesterId(Long userId);
+
+    Collection<Request> getAllByEventId(Long eventId);
 }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface EventService {
+
     Collection<EventFullDto> getAllByAdmin(Collection<Long> users, Collection<String> states,
                                            Collection<Long> categories, LocalDateTime rangeStart,
                                            LocalDateTime rangeEnd, int from, int size);
@@ -20,7 +21,7 @@ public interface EventService {
 
     Collection<EventShortDto> getAllEventsByUser(Long userId, int from, int size);
 
-    EventFullDto add(Long userId, NewEventDto newEventDto);
+    EventFullDto createEvent(Long userId, NewEventDto newEventDto);
 
     EventFullDto updateUserEvent(Long userId, UpdateEventRequest updateEventRequest);
 
