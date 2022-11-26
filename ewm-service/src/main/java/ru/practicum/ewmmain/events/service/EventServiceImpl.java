@@ -9,8 +9,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmmain.categories.model.Category;
 import ru.practicum.ewmmain.categories.repository.CategoryRepository;
+import ru.practicum.ewmmain.client.RestClient;
 import ru.practicum.ewmmain.events.dto.*;
-import ru.practicum.ewmmain.events.model.Event;
+import ru.practicum.ewmmain.events.model.*;
 import ru.practicum.ewmmain.events.model.EventStatus;
 import ru.practicum.ewmmain.events.repository.EventRepository;
 import ru.practicum.ewmmain.exception.NotFoundException;
@@ -39,6 +40,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
     private final ModelMapper modelMapper;
+    private final RestClient statsClient;
 
 
     @Override
@@ -256,5 +258,17 @@ public class EventServiceImpl implements EventService {
         log.info("Has changed status on " + request.getStatus() + " for request id " + requestId);
         requestRepository.save(request);
         return modelMapper.map(request, ParticipantRequestDto.class);
+    }
+
+    @Override
+    public EventFullDto getShortDtoById(Long eventId, HttpServletRequest request) {
+        log.info("Getting event with id {}", eventId);
+        statsClient.postHit(
+                new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+        );
+        Event event = eventRepository.findById(eventId).orElseThrow(
+                () -> new NotFoundException(String.format("В БД нет события с id " + eventId)));
+        return modelMapper.map(event, EventFullDto.class);
     }
 }

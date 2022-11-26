@@ -27,7 +27,7 @@ public class PublicEventController {
         return eventService.getShortDtoById(eventId, request);
     }
 
-    @GetMapping
+    /*@GetMapping
     public Collection<EventShortDto> getAllById(@RequestParam(required = false) String text,
                                                 @RequestParam(required = false) Collection<Long> categories,
                                                 @RequestParam(required = false) Boolean paid,
@@ -43,5 +43,5 @@ public class PublicEventController {
         log.info("Получен запрос списка событий {}", text);
         return eventService.getAll(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                 sort, from, size, request);
-    }
+    }*/
 }
