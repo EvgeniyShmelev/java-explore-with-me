@@ -3,12 +3,12 @@ package ru.practicum.ewmmain.request.service;
 import org.springframework.stereotype.Repository;
 import ru.practicum.ewmmain.request.dto.ParticipantRequestDto;
 
-import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface RequestService {
 
-    Collection<ParticipantRequestDto> getAll(Long userId);
+    List<ParticipantRequestDto> getAll(Long userId);
 
     ParticipantRequestDto add(Long userId, Long eventId);
 

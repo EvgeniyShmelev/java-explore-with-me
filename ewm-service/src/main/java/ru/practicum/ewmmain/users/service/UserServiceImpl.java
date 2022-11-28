@@ -6,12 +6,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewmmain.exception.NotFoundException;
 import ru.practicum.ewmmain.users.dto.NewUserRequest;
 import ru.practicum.ewmmain.users.dto.UserDto;
 import ru.practicum.ewmmain.users.model.User;
 import ru.practicum.ewmmain.users.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,7 +24,7 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Collection<UserDto> getAll(Collection<Long> ids, int from, int size) {
+    public List<UserDto> getAll(List<Long> ids, int from, int size) {
         log.info("Получение списка всех пользователей");
         Pageable pageable = PageRequest.of(from, size);
         Collection<User> users = userRepository.findUsersByIdIn(ids, pageable);
@@ -40,6 +42,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
         log.info("Удаление пользователя с id: {}", userId);
         userRepository.deleteById(userId);
     }

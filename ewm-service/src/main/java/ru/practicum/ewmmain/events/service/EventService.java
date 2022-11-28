@@ -5,13 +5,13 @@ import ru.practicum.ewmmain.request.dto.ParticipantRequestDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
 public interface EventService {
 
-    Collection<EventFullDto> getAllByAdmin(Collection<Long> users, Collection<String> states,
-                                           Collection<Long> categories, LocalDateTime rangeStart,
-                                           LocalDateTime rangeEnd, int from, int size);
+    List<EventFullDto> getAllByAdmin(List<Long> users, List<String> states,
+                                     List<Long> categories, LocalDateTime rangeStart,
+                                     LocalDateTime rangeEnd, int from, int size);
 
     EventFullDto updateByAdmin(Long eventId, AdminUpdateEventRequest adminUpdateEventRequest);
 
@@ -19,7 +19,7 @@ public interface EventService {
 
     EventFullDto rejectDyAdmin(Long eventId);
 
-    Collection<EventShortDto> getAllEventsByUser(Long userId, int from, int size);
+    List<EventShortDto> getAllEventsByUser(Long userId, int from, int size);
 
     EventFullDto createEvent(Long userId, NewEventDto newEventDto);
 
@@ -29,7 +29,7 @@ public interface EventService {
 
     EventFullDto cancelUserEvent(Long userId, Long eventId);
 
-    Collection<ParticipantRequestDto> getEventRequests(Long userId, Long eventId);
+    List<ParticipantRequestDto> getEventRequests(Long userId, Long eventId);
 
     ParticipantRequestDto confirmRequest(Long userId, Long eventId, Long requestId);
 

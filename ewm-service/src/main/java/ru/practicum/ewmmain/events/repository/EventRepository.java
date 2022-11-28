@@ -9,16 +9,16 @@ import ru.practicum.ewmmain.events.model.EventStatus;
 import ru.practicum.ewmmain.users.model.User;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
-    Collection<Event> findAllByCategoryId(Long id);
+    List<Event> findAllByCategoryId(Long id);
 
-    Collection<Event> getEventsByAdmin(Collection<User> users,
-                                       Collection<EventStatus> states,
-                                       Collection<Category> setOfCategories,
-                                       LocalDateTime start, LocalDateTime end,
-                                       Pageable pageable);
+    List<Event> findEventsByInitiatorIdIn(List<User> users,
+                                 List<EventStatus> states,
+                                 List<Category> setOfCategories,
+                                 LocalDateTime start, LocalDateTime end,
+                                 Pageable pageable);
 
-    Collection<Event> findEventsByInitiatorId(Long userId, PageRequest pageRequest);
+    List<Event> findEventsByInitiatorId(Long userId, PageRequest pageRequest);
 }

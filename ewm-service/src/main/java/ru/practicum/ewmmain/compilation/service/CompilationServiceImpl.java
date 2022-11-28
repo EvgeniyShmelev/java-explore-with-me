@@ -15,8 +15,8 @@ import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.repository.EventRepository;
 import ru.practicum.ewmmain.exception.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +28,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Collection<CompilationDto> getAll(Boolean pinned, int from, int size) {
+    public List<CompilationDto> getAll(Boolean pinned, int from, int size) {
         Pageable pageable = PageRequest.of(from, size, Sort.by("id"));
         Collection<Compilation> compilations = compilationRepository.findAll(pageable).getContent();
         return compilations.stream()

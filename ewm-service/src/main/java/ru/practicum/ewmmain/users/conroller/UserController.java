@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/admin/users")
@@ -22,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Collection<UserDto> getAllUsers(@RequestParam Collection<Long> ids,
+    public Collection<UserDto> getAllUsers(@RequestParam List<Long> ids,
                                            @RequestParam(required = false, defaultValue = "0")
                                            @PositiveOrZero int from,
                                            @RequestParam(required = false, defaultValue = "10")

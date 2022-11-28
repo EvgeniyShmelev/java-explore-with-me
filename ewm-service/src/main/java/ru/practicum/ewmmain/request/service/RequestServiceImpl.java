@@ -16,6 +16,7 @@ import ru.practicum.ewmmain.users.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,7 +55,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Collection<ParticipantRequestDto> getAll(Long userId) {
+    public List<ParticipantRequestDto> getAll(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
         log.info("Получение информации о заявках пользователя {} на участие в чужих событиях", userId);

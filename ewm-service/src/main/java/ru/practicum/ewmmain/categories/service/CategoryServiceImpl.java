@@ -17,6 +17,7 @@ import ru.practicum.ewmmain.exception.ForbiddenException;
 import ru.practicum.ewmmain.exception.NotFoundException;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Collection<CategoryDto> getAll(int from, int size) {
+    public List<CategoryDto> getAll(int from, int size) {
         log.info("Получение списка всех категорий");
         Pageable pageable = PageRequest.of(from, size, Sort.by("id"));
         return categoryRepository.findAll(pageable).stream()

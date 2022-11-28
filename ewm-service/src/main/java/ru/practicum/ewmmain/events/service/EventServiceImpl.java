@@ -11,8 +11,9 @@ import ru.practicum.ewmmain.categories.model.Category;
 import ru.practicum.ewmmain.categories.repository.CategoryRepository;
 import ru.practicum.ewmmain.client.RestClient;
 import ru.practicum.ewmmain.events.dto.*;
-import ru.practicum.ewmmain.events.model.*;
+import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.model.EventStatus;
+import ru.practicum.ewmmain.events.model.Hit;
 import ru.practicum.ewmmain.events.repository.EventRepository;
 import ru.practicum.ewmmain.exception.NotFoundException;
 import ru.practicum.ewmmain.request.dto.ParticipantRequestDto;
@@ -28,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,27 +46,27 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public Collection<EventFullDto> getAllByAdmin(Collection<Long> users, Collection<String> states,
-                                                  Collection<Long> categories, LocalDateTime rangeStart,
-                                                  LocalDateTime rangeEnd, int from, int size) {
+    public List<EventFullDto> getAllByAdmin(List<Long> users, List<String> states,
+                                            List<Long> categories, LocalDateTime rangeStart,
+                                            LocalDateTime rangeEnd, int from, int size) {
 
         Pageable pageable = PageRequest.of(from, size, Sort.by("id"));
 
-        Collection<Category> categoryEntities = new ArrayList<>();
+        ArrayList<Category> categoryEntities = new ArrayList<>();
         for (Long catId : categories) {
             Category category = categoryRepository.findById(catId)
                     .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + catId));
             categoryEntities.add(category);
         }
 
-        Collection<User> userEntities = new ArrayList<>();
+        ArrayList<User> userEntities = new ArrayList<>();
         for (Long userId : users) {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
             userEntities.add(user);
         }
 
-        Collection<EventStatus> statesEnum = new ArrayList<>();
+        ArrayList<EventStatus> statesEnum = new ArrayList<>();
         if (states != null) {
             for (String state : states) {
                 EventStatus eventStatus = EventStatus.valueOf(state);
@@ -74,7 +76,7 @@ public class EventServiceImpl implements EventService {
             statesEnum.addAll(Arrays.asList(EventStatus.values()));
         }
 
-        Collection<Event> events = eventRepository.getEventsByAdmin(
+        List<Event> events = eventRepository.findEventsByInitiatorIdIn(
                 userEntities,
                 statesEnum,
                 categoryEntities,
@@ -147,7 +149,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<EventShortDto> getAllEventsByUser(Long id, int from, int size) {
+    public List<EventShortDto> getAllEventsByUser(Long id, int from, int size) {
         log.info("Список всех событий пользователя id {}", id);
         Collection<Event> events = eventRepository.findEventsByInitiatorId(id, PageRequest.of(from, size));
         return events.stream()
@@ -223,7 +225,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<ParticipantRequestDto> getEventRequests(Long userId, Long eventId) {
+    public List<ParticipantRequestDto> getEventRequests(Long userId, Long eventId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
 

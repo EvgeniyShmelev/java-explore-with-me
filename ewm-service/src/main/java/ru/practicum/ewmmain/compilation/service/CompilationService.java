@@ -3,11 +3,11 @@ package ru.practicum.ewmmain.compilation.service;
 import ru.practicum.ewmmain.compilation.dto.CompilationDto;
 import ru.practicum.ewmmain.compilation.dto.NewCompilationDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface CompilationService {
 
-    Collection<CompilationDto> getAll(Boolean pinned, int from, int size);
+    List<CompilationDto> getAll(Boolean pinned, int from, int size);
 
     CompilationDto getCompilationDtoById(Long id);
 

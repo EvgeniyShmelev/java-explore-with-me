@@ -3,10 +3,10 @@ package ru.practicum.ewmmain.categories.service;
 import ru.practicum.ewmmain.categories.dto.CategoryDto;
 import ru.practicum.ewmmain.categories.dto.NewCategoryDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface CategoryService {
-    Collection<CategoryDto> getAll(int from, int size);
+    List<CategoryDto> getAll(int from, int size);
 
     CategoryDto getCategoryDtoById(Long id);
 

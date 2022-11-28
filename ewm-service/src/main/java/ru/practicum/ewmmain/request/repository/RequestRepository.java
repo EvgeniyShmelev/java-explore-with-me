@@ -3,13 +3,13 @@ package ru.practicum.ewmmain.request.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.ewmmain.request.model.Request;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Request getByRequesterIdAndEventId(Long userId, Long eventId);
 
-    Collection<Request> getAllByRequesterId(Long userId);
+    List<Request> getAllByRequesterId(Long userId);
 
-    Collection<Request> getAllByEventId(Long eventId);
+    List<Request> getAllByEventId(Long eventId);
 }
