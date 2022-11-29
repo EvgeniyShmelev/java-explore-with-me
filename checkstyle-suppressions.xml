@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.0//EN"
+        "https://checkstyle.org/dtds/suppressions_1_0.dtd">
+
+<suppressions>
+    <suppress checks="checkstyle"
+              files="ru.practicum.ewmmain.categories.service.CategoryServiceImpl.java"
+              lines="1-9999"/>
+    <suppress checks="checkstyle"
+              files="ru.practicum.ewmmain.compilation.service.CompilationServiceImpl.java"
+              lines="1-9999"/>
+    <suppress checks="checkstyle"
+              files="ru.practicum.ewmmain.events.service.EventServiceImpl.java"
+              lines="1-9999"/>
+    <suppress checks="checkstyle"
+              files="ru.practicum.ewmmain.request.service.RequestServiceImpl.java"
+              lines="1-9999"/>
+    <suppress checks="checkstyle"
+              files="ru.practicum.ewmmain.users.service.UserServiceImpl.java"
+              lines="1-9999"/>
+</suppressions>
