@@ -37,7 +37,7 @@ public interface EventService {
 
     EventFullDto getShortDtoById(Long eventId, HttpServletRequest requestId);
 
-    /*Collection<EventShortDto> getAll(String text, Collection<Long> categories, boolean paid,
+  /*  List<EventShortDto> getAll(String text, List<Long> categories, Boolean paid,
                                      LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                      boolean onlyAvailable, String sort,
                                      Integer from, Integer size, HttpServletRequest request);*/

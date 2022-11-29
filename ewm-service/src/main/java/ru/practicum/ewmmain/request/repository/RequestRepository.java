@@ -2,6 +2,7 @@ package ru.practicum.ewmmain.request.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.ewmmain.request.model.Request;
+import ru.practicum.ewmmain.request.model.RequestStatus;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     List<Request> getAllByRequesterId(Long userId);
 
     List<Request> getAllByEventId(Long eventId);
+
+    List<Request> findByEventIdAndStatus(Long id, RequestStatus status);
 }

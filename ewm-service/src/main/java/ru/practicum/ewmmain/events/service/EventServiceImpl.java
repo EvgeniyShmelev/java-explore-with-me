@@ -273,4 +273,35 @@ public class EventServiceImpl implements EventService {
                 () -> new NotFoundException(String.format("В БД нет события с id " + eventId)));
         return modelMapper.map(event, EventFullDto.class);
     }
+
+    /*@Override
+    public List<EventShortDto> getAll(String text, List<Long> categories, Boolean paid,
+                                      LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                      boolean onlyAvailable, String sort,
+                                      Integer from, Integer size, HttpServletRequest request) {
+        statsClient.postHit(
+                new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+        );
+        Pageable pageable = PageRequest.of(from, size, Sort.by("id"));
+
+        Predicate predicate = QPredicates.builder()
+                .add(text, txt -> event.annotation.containsIgnoreCase(txt)
+                        .or(event.description.containsIgnoreCase(txt)))
+                .add(categories, event.category.id::in)
+                .add(rangeStart, event.eventDate::after)
+                .add(rangeEnd, event.eventDate::before)
+                .add(paid, event.paid::eq)
+                .buildAnd();
+        List<Event> events = eventRepository.findAll(predicate, PageRequest.of(from, size)).getContent();
+        if (onlyAvailable) {
+            events = events.stream()
+                    .filter(e -> (e.getParticipantLimit() >
+                            requestRepository.findByEventIdAndStatus(e.getId(), RequestStatus.CONFIRMED).size()))
+                    .collect(Collectors.toList());
+        }
+        return events.stream()
+                .map(event -> modelMapper.map(event, EventShortDto.class))
+                .collect(Collectors.toList());
+    }*/
 }
