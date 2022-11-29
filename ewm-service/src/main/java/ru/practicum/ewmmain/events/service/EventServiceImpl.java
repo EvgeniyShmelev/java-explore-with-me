@@ -158,17 +158,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto createEvent(Long userId, NewEventDto newEvеntDto) {
-        log.info("Создать новое событие: {}", newEvеntDto);
-        Category category = categoryRepository.findById(newEvеntDto.getCategory())
-                .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + newEvеntDto.getCategory()));
+    public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
+        log.info("Создать новое событие: {}", newEventDto);
+        Category category = categoryRepository.findById(newEventDto.getCategory())
+                .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + newEventDto.getCategory()));
         User initiator = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
-        Event newEvent = modelMapper.map(newEvеntDto, Event.class);
+        Event newEvent = modelMapper.map(newEventDto, Event.class);
         newEvent.setCategory(category);
         newEvent.setInitiator(initiator);
-        newEvent.setLon(newEvеntDto.getLocation().getLon());
-        newEvent.setLat(newEvеntDto.getLocation().getLat());
+        newEvent.setLon(newEventDto.getLocation().getLon());
+        newEvent.setLat(newEventDto.getLocation().getLat());
         newEvent.setState(EventStatus.PENDING);
 
         Event eventDB = eventRepository.save(newEvent);

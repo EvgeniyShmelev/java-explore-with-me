@@ -21,6 +21,6 @@
               files="ru.practicum.ewmmain.users.service.UserServiceImpl.java"
               lines="1-9999"/>
     <suppress checks="checkstyle"
-              files="ru.practicum.ewmstat.service.StatsServiceImpl.java"
+              files="stats-server.src.main.java.ru.practicum.ewmstat.service.StatsServiceImpl.java"
               lines="1-9999"/>
 </suppressions>
