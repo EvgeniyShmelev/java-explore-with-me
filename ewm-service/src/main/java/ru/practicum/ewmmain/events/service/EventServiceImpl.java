@@ -1,5 +1,6 @@
 package ru.practicum.ewmmain.events.service;
 
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,7 @@ import ru.practicum.ewmmain.request.model.RequestStatus;
 import ru.practicum.ewmmain.request.repository.RequestRepository;
 import ru.practicum.ewmmain.users.model.User;
 import ru.practicum.ewmmain.users.repository.UserRepository;
+import ru.practicum.ewmmain.utill.QPredicates;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -31,6 +33,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.ewmmain.events.model.QEvent.event;
 
 @Service
 @RequiredArgsConstructor
@@ -274,7 +278,7 @@ public class EventServiceImpl implements EventService {
         return modelMapper.map(event, EventFullDto.class);
     }
 
-    /*@Override
+    @Override
     public List<EventShortDto> getAll(String text, List<Long> categories, Boolean paid,
                                       LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                       boolean onlyAvailable, String sort,
@@ -303,5 +307,5 @@ public class EventServiceImpl implements EventService {
         return events.stream()
                 .map(event -> modelMapper.map(event, EventShortDto.class))
                 .collect(Collectors.toList());
-    }*/
+    }
 }

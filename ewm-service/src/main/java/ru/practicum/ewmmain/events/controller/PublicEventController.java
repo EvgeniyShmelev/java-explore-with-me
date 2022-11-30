@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -28,21 +27,21 @@ public class PublicEventController {
         return eventService.getShortDtoById(eventId, request);
     }
 
-   /* @GetMapping
+    @GetMapping
     public List<EventShortDto> getAllById(@RequestParam(required = false) String text,
-                                                @RequestParam(required = false) List<Long> categories,
-                                                @RequestParam(required = false) Boolean paid,
-                                                @RequestParam(required = false)
-                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-                                                @RequestParam(required = false)
-                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                                @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                                @RequestParam(required = false) String sort,
-                                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                @RequestParam(defaultValue = "10") @Positive int size,
-                                                HttpServletRequest request) {
+                                          @RequestParam(required = false) List<Long> categories,
+                                          @RequestParam(required = false) Boolean paid,
+                                          @RequestParam(required = false)
+                                          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+                                          @RequestParam(required = false)
+                                          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+                                          @RequestParam(defaultValue = "false") Boolean onlyAvailable,
+                                          @RequestParam(required = false) String sort,
+                                          @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                          @RequestParam(defaultValue = "10") @Positive int size,
+                                          HttpServletRequest request) {
         log.info("Получен запрос списка событий {}", text);
         return eventService.getAll(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                 sort, from, size, request);
-    }*/
+    }
 }
