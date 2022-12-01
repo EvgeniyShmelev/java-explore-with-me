@@ -14,7 +14,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotException(final NotFoundException e) {
         log.info(e.getMessage());
-        return new ErrorResponse(
+        return new ErrorResponse(HttpStatus.NOT_FOUND.toString(),
                 e.getMessage()
         );
     }
@@ -23,8 +23,27 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleForbiddenException(final ForbiddenException e) {
         log.info(e.getMessage());
-        return new ErrorResponse(
+        return new ErrorResponse(HttpStatus.FORBIDDEN.toString(),
                 e.getMessage()
         );
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public ErrorResponse handleBadRequestException(BadRequestException e) {
+        log.info(e.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.toString(),
+                e.getMessage()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictException.class)
+    public ErrorResponse handleConflictException(ConflictException e) {
+        log.info(e.getMessage());
+        return new ErrorResponse(HttpStatus.CONFLICT.toString(),
+                e.getMessage()
+        );
+    }
+
 }

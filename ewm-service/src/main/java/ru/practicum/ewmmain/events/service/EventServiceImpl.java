@@ -16,6 +16,8 @@ import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.model.EventStatus;
 import ru.practicum.ewmmain.events.model.Hit;
 import ru.practicum.ewmmain.events.repository.EventRepository;
+import ru.practicum.ewmmain.exception.BadRequestException;
+import ru.practicum.ewmmain.exception.ConflictException;
 import ru.practicum.ewmmain.exception.NotFoundException;
 import ru.practicum.ewmmain.request.dto.ParticipantRequestDto;
 import ru.practicum.ewmmain.request.model.Request;
@@ -56,7 +58,11 @@ public class EventServiceImpl implements EventService {
 
         Pageable pageable = PageRequest.of(from, size, Sort.by("id"));
 
+        log.info("Список категорий {}", categories);
+
         ArrayList<Category> categoryEntities = new ArrayList<>();
+
+
         for (Long catId : categories) {
             Category category = categoryRepository.findById(catId)
                     .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + catId));
@@ -163,12 +169,18 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
-        log.info("Создать новое событие: {}", newEventDto);
         Category category = categoryRepository.findById(newEventDto.getCategory())
                 .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + newEventDto.getCategory()));
         User initiator = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
         Event newEvent = modelMapper.map(newEventDto, Event.class);
+        if (newEvent.getAnnotation() == null || newEvent.getAnnotation().isBlank()) {
+            throw new BadRequestException("Нет описания события.");
+        }
+        if (categoryRepository.findAll().contains(newEvent.getAnnotation())) {
+            throw new ConflictException(
+                    "Событие " + newEvent.getAnnotation() + " уже существует .");
+        }
         newEvent.setCategory(category);
         newEvent.setInitiator(initiator);
         newEvent.setLon(newEventDto.getLocation().getLon());
@@ -176,6 +188,7 @@ public class EventServiceImpl implements EventService {
         newEvent.setState(EventStatus.PENDING);
 
         Event eventDB = eventRepository.save(newEvent);
+        log.info("Создано новое событие: {}", eventDB);
         return modelMapper.map(eventDB, EventFullDto.class);
     }
 

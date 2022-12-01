@@ -1,9 +1,12 @@
 package ru.practicum.ewmmain.categories.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "categories")
+@Data
 public class Category {
     @Id
     @Column(name = "category_id")

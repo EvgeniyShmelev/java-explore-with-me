@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.repository.EventRepository;
+import ru.practicum.ewmmain.exception.BadRequestException;
 import ru.practicum.ewmmain.exception.NotFoundException;
 import ru.practicum.ewmmain.request.dto.ParticipantRequestDto;
 import ru.practicum.ewmmain.request.model.Request;
@@ -30,6 +31,9 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public ParticipantRequestDto add(Long userId, Long eventId) {
+        if (eventId == null) {
+            throw new BadRequestException("EventId не может быть равен 0");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
         Event event = eventRepository.findById(eventId)

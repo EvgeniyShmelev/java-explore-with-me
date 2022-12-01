@@ -13,11 +13,14 @@ import ru.practicum.ewmmain.categories.model.Category;
 import ru.practicum.ewmmain.categories.repository.CategoryRepository;
 import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.repository.EventRepository;
+import ru.practicum.ewmmain.exception.BadRequestException;
+import ru.practicum.ewmmain.exception.ConflictException;
 import ru.practicum.ewmmain.exception.ForbiddenException;
 import ru.practicum.ewmmain.exception.NotFoundException;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,17 +52,32 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto add(NewCategoryDto newCategoryDto) {
         log.info("Добавление категории: {}", newCategoryDto);
-        Category addedCategory = categoryRepository.save(modelMapper.map(newCategoryDto, Category.class));
-        return modelMapper.map(addedCategory, CategoryDto.class);
+        Category category = modelMapper.map(newCategoryDto, Category.class);
+        if (category.getName() == null || category.getName().isBlank()) {
+            throw new BadRequestException("Нет названия категории.");
+        }
+        Optional<Category> categoryOptional = categoryRepository.getCategoryByName(category.getName());
+        if (categoryOptional.isPresent()) {
+            throw new ConflictException("Категория с именем " + category.getName() + " уже существует");
+        }
+        categoryRepository.save(category);
+        log.info("Категория с id " + category.getId() + " было успешно добавлена.");
+        return modelMapper.map(category, CategoryDto.class);
     }
 
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
-        CategoryDto categoryForUpdate = getCategoryDtoById(categoryDto.getId());
-        categoryForUpdate.setName(categoryDto.getName());
-        categoryRepository.save(modelMapper.map(categoryForUpdate, Category.class));
+        Category category = modelMapper.map(categoryDto, Category.class);
+        if (category.getName() == null || category.getName().isBlank()) {
+            throw new BadRequestException("Название категории пустое!");
+        }
+        Optional<Category> categoryOptional = categoryRepository.getCategoryByName(category.getName());
+        if (categoryOptional.isPresent()) {
+            throw new ConflictException("Категория с именем " + category.getName() + " уже существует");
+        }
+        categoryRepository.save(category);
         log.info("Обновлена категория с id {}", categoryDto.getId());
-        return modelMapper.map(categoryForUpdate, CategoryDto.class);
+        return modelMapper.map(category, CategoryDto.class);
     }
 
     @Override

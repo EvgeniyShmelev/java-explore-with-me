@@ -22,13 +22,13 @@ public class AdminCategoryController {
 
     @PatchMapping
     public CategoryDto updateCategory(@RequestBody CategoryDto categoryDto) {
-        log.info("Изменена категория {}", categoryDto);
+        log.info("Изменение категории {}", categoryDto);
         return categoryService.update(categoryDto);
     }
 
     @DeleteMapping("/{catId}")
     public void deleteCategory(@PathVariable Long catId) {
-        log.info("Удалена категория {}", catId);
+        log.info("Удаление категория {}", catId);
         categoryService.delete(catId);
     }
 }

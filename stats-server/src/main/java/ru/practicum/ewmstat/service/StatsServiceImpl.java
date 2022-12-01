@@ -44,7 +44,7 @@ public class StatsServiceImpl implements StatsService {
                 .map(h -> modelMapper.map(h, ViewStats.class))
                 .collect(Collectors.toList());
         if (viewStats.isEmpty()) {
-            return List.of(new ViewStats("unavailable", "unavailable", 0));
+            return List.of(new ViewStats("unavailable", "unavailable", 0L));
         }
         return viewStats;
     }

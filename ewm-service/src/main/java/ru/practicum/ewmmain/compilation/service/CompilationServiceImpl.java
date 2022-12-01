@@ -13,8 +13,10 @@ import ru.practicum.ewmmain.compilation.model.Compilation;
 import ru.practicum.ewmmain.compilation.repository.CompilationRepository;
 import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.repository.EventRepository;
+import ru.practicum.ewmmain.exception.BadRequestException;
 import ru.practicum.ewmmain.exception.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,19 +49,20 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto add(NewCompilationDto newCompilationDto) {
         log.info("Добавление подборки: {}", newCompilationDto);
-        Compilation newCompilation = compilationRepository.save(modelMapper.map(newCompilationDto, Compilation.class));
-        // наверное надо наполнить подборку событиями. А то пустая получается
-        /*Collection<Long> eventsList = newCompilationDto.getEvents();
+        Compilation compilation = modelMapper.map(newCompilationDto, Compilation.class);
+        Collection<Long> eventsList = newCompilationDto.getEvents();
         Collection<Event> events = new ArrayList<>();
         for (Long eventId : eventsList) {
             Event event = eventRepository.findById(eventId)
                     .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
             events.add(event);
         }
-        newCompilation.setEvents(events);
-        compilationRepository.save(newCompilation);*/
-        //Или нет?
-        return modelMapper.map(newCompilation, CompilationDto.class);
+        compilation.setEvents(events);
+        if (compilation.getTitle() == null || compilation.getTitle().isBlank()) {
+            throw new BadRequestException("Пустое название подборки");
+        }
+        compilationRepository.save(compilation);
+        return modelMapper.map(compilation, CompilationDto.class);
     }
 
     @Override

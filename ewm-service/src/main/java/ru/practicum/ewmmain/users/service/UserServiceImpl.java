@@ -6,6 +6,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewmmain.exception.BadRequestException;
+import ru.practicum.ewmmain.exception.ConflictException;
 import ru.practicum.ewmmain.exception.NotFoundException;
 import ru.practicum.ewmmain.users.dto.NewUserRequest;
 import ru.practicum.ewmmain.users.dto.UserDto;
@@ -14,6 +16,7 @@ import ru.practicum.ewmmain.users.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,8 +39,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto add(NewUserRequest newUserRequest) {
         log.info("Добавление пользователя: {}", newUserRequest);
-        User user = userRepository.save(modelMapper.map(newUserRequest, User.class));
-        return modelMapper.map(user, UserDto.class);
+        User user = modelMapper.map(newUserRequest, User.class);
+        if (user.getName() == null || user.getName().isBlank()) {
+            throw new BadRequestException("Пустое имя.");
+        }
+        Optional<User> userOptional = userRepository.getUserByName(user.getName());
+        if (userOptional.isPresent()) {
+            throw new ConflictException("Пользователь с именем " + user.getName() + "уже существует");
+        }
+        //почему код ниже не работает?
+        /*if (userRepository.findAll().contains(user.getEmail())) {
+            throw new ConflictException(
+                    "Пользователь с именем " + user.getName() + " уже существует.");
+        }*/
+        User newUser = userRepository.save(user);
+        log.info("Добавлен пользователь: {}", newUser);
+        return modelMapper.map(newUser, UserDto.class);
     }
 
     @Override
