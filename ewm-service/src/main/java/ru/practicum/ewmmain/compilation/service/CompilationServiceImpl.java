@@ -116,6 +116,9 @@ public class CompilationServiceImpl implements CompilationService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
         compilation.getEvents().remove(event);
+        Collection<Event> events = compilation.getEvents();
+        compilation.setEvents(events);
+        compilationRepository.save(compilation);
         log.info("Событие с id {} удалено из подборки с id {}", eventId, compilationId);
     }
 }
