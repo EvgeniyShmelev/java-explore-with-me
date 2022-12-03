@@ -19,9 +19,9 @@ public class RestClient {
     private static final String FALSE_STRING_VALUE = "false";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @Value("${stats-post.path}")
+    @Value("${stats-server-post.path}")
     private String hitPostPath;
-    @Value("${stats-get.path}")
+    @Value("${stats-server-get.path}")
     private String hitGetPath;
 
     private final RestTemplate rest;

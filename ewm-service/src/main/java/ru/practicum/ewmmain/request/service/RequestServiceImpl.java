@@ -39,14 +39,20 @@ public class RequestServiceImpl implements RequestService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
         log.info("Добавление запроса от пользователя с id {} на участие в событии с id {}", userId, eventId);
-        Request request = requestRepository.getByRequesterIdAndEventId(userId, event.getId());
+        //Request request = requestRepository.getByRequesterIdAndEventId(userId, event.getId());
         Request newRequest = new Request();
-        request.setRequester(user);
-        request.setEvent(event);
-        request.setStatus(RequestStatus.PENDING);
-        request.setCreated(LocalDateTime.now());
+        newRequest.setRequester(user);
+        newRequest.setEvent(event);
+        newRequest.setStatus(RequestStatus.PENDING);
+        newRequest.setCreated(LocalDateTime.now());
         requestRepository.save(newRequest);
-        return modelMapper.map(request, ParticipantRequestDto.class);
+        ParticipantRequestDto participantRequestDto = new ParticipantRequestDto();
+        participantRequestDto.setRequester(newRequest.getRequester().getId());
+        participantRequestDto.setEvent(newRequest.getEvent().getId());
+        participantRequestDto.setStatus(newRequest.getStatus());
+        participantRequestDto.setCreated(newRequest.getCreated());
+        log.info("Добавлен запрос {}", newRequest);
+        return participantRequestDto;
     }
 
     @Override

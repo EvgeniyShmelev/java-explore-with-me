@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmmain.categories.model.Category;
 import ru.practicum.ewmmain.categories.repository.CategoryRepository;
@@ -30,8 +28,6 @@ import ru.practicum.ewmmain.utill.QPredicates;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +51,7 @@ public class EventServiceImpl implements EventService {
     public List<EventFullDto> getAllByAdmin(List<Long> users, List<EventStatus> states,
                                             List<Long> categories, LocalDateTime rangeStart,
                                             LocalDateTime rangeEnd, int from, int size) {
-
+        log.info("Поиск событий по параметрам");
         Predicate predicate = QPredicates.builder()
                 .add(users, event.initiator.id::in)
                 .add(states, event.state::in)
@@ -64,7 +60,7 @@ public class EventServiceImpl implements EventService {
                 .add(rangeEnd, event.eventDate::before)
                 .buildAnd();
         List<Event> events = eventRepository.findAll(predicate, PageRequest.of(from, size)).getContent();
-
+        log.info("Найденные события {}", events);
         return events.stream()
                 .map(event -> modelMapper.map(event, EventFullDto.class))
                 .collect(Collectors.toList());
