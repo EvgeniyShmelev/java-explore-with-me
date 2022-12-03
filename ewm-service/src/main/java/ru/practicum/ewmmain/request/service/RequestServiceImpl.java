@@ -54,7 +54,7 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new NotFoundException("В БД нет запроса с id " + requestId));
         log.info("Отмена запроса от пользователя с id {} на участие в событии с id {}", userId, requestId);
         request.setStatus(RequestStatus.CANCELED);
-        return modelMapper.map(requestRepository.save(request), ParticipantRequestDto.class);
+        return RequestMapper.toRequestDto(requestRepository.save(request));
     }
 
     @Override

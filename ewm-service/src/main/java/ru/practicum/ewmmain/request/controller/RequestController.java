@@ -28,7 +28,7 @@ public class RequestController {
         return requestService.add(userId, eventId);
     }
 
-    @PatchMapping("/{userId}/requests/{reqId}/cancel")
+    @PatchMapping("/{userId}/requests/{requestId}/cancel")
     public ParticipantRequestDto update(@PathVariable(required = true) Long userId,
                                         @PathVariable(required = true) Long requestId) {
         log.info("Отмена заявки: {}, на участие в событии {}", requestId, userId);

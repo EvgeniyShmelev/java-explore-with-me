@@ -70,16 +70,16 @@ public class PrivateEventController {
     @PatchMapping("{eventId}/requests/{reqId}/confirm")
     public ParticipantRequestDto confirmRequest(@PathVariable(required = true) Long userId,
                                                 @PathVariable(required = true) Long eventId,
-                                                @PathVariable(required = true) Long requestId) {
-        log.info("Подтверждение чужой заявки: {}, на участие в событии {}", requestId, eventId);
-        return eventService.confirmRequest(userId, eventId, requestId);
+                                                @PathVariable(required = true) Long reqId) {
+        log.info("Подтверждение чужой заявки: {}, на участие в событии {}", reqId, eventId);
+        return eventService.confirmRequest(userId, eventId, reqId);
     }
 
     @PatchMapping("{eventId}/requests/{reqId}/reject")
     public ParticipantRequestDto rejectRequest(@PathVariable(required = true) Long userId,
                                                @PathVariable(required = true) Long eventId,
-                                               @PathVariable(required = true) Long requestId) {
-        log.info("Отклонение чужой заявки: {}, на участие в событии {}", requestId, eventId);
-        return eventService.rejectRequest(userId, eventId, requestId);
+                                               @PathVariable(required = true) Long reqId) {
+        log.info("Отклонение чужой заявки: {}, на участие в событии {}", reqId, eventId);
+        return eventService.rejectRequest(userId, eventId, reqId);
     }
 }

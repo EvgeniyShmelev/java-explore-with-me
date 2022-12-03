@@ -18,6 +18,7 @@ import ru.practicum.ewmmain.exception.BadRequestException;
 import ru.practicum.ewmmain.exception.ConflictException;
 import ru.practicum.ewmmain.exception.NotFoundException;
 import ru.practicum.ewmmain.request.dto.ParticipantRequestDto;
+import ru.practicum.ewmmain.request.mapper.RequestMapper;
 import ru.practicum.ewmmain.request.model.Request;
 import ru.practicum.ewmmain.request.model.RequestStatus;
 import ru.practicum.ewmmain.request.repository.RequestRepository;
@@ -200,7 +201,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto cancelUserEvent(Long userId, Long eventId) {
-        log.info("Canceling the event with id {}", eventId);
+        log.info("Отмена события с id {}", eventId);
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
         event.setState(EventStatus.CANCELED);
@@ -218,13 +219,13 @@ public class EventServiceImpl implements EventService {
 
         Collection<Request> requests = requestRepository.getAllByEventId(eventId);
         return requests.stream()
-                .map(request -> modelMapper.map(request, ParticipantRequestDto.class))
+                .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ParticipantRequestDto confirmRequest(Long userId, Long eventId, Long requestId) {
-        log.info("Getting all confirmed requests from user {}", userId);
+        log.info("Получение всех подтвержденных запросов пользователя с id {}", userId);
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
         eventRepository.findById(eventId)
@@ -232,8 +233,7 @@ public class EventServiceImpl implements EventService {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("В БД нет запроса с id " + requestId));
         request.setStatus(RequestStatus.CONFIRMED);
-        requestRepository.save(request);
-        return modelMapper.map(request, ParticipantRequestDto.class);
+        return RequestMapper.toRequestDto(requestRepository.save(request));
     }
 
     @Override
@@ -241,14 +241,13 @@ public class EventServiceImpl implements EventService {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("В БД нет запроса с id " + requestId));
         request.setStatus(RequestStatus.REJECTED);
-        log.info("Has changed status on " + request.getStatus() + " for request id " + requestId);
-        requestRepository.save(request);
-        return modelMapper.map(request, ParticipantRequestDto.class);
+        log.info("Изменение статуса события на {}, для запроса с id: {}", request.getStatus(), requestId);
+        return RequestMapper.toRequestDto(requestRepository.save(request));
     }
 
     @Override
     public EventFullDto getShortDtoById(Long eventId, HttpServletRequest request) {
-        log.info("Getting event with id {}", eventId);
+        log.info("Получение события с id {}", eventId);
         statsClient.postHit(
                 new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
                         LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
