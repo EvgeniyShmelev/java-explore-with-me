@@ -9,6 +9,7 @@ import ru.practicum.ewmmain.events.repository.EventRepository;
 import ru.practicum.ewmmain.exception.BadRequestException;
 import ru.practicum.ewmmain.exception.NotFoundException;
 import ru.practicum.ewmmain.request.dto.ParticipantRequestDto;
+import ru.practicum.ewmmain.request.mapper.RequestMapper;
 import ru.practicum.ewmmain.request.model.Request;
 import ru.practicum.ewmmain.request.model.RequestStatus;
 import ru.practicum.ewmmain.request.repository.RequestRepository;
@@ -39,20 +40,12 @@ public class RequestServiceImpl implements RequestService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
         log.info("Добавление запроса от пользователя с id {} на участие в событии с id {}", userId, eventId);
-        //Request request = requestRepository.getByRequesterIdAndEventId(userId, event.getId());
-        Request newRequest = new Request();
-        newRequest.setRequester(user);
-        newRequest.setEvent(event);
-        newRequest.setStatus(RequestStatus.PENDING);
-        newRequest.setCreated(LocalDateTime.now());
-        requestRepository.save(newRequest);
-        ParticipantRequestDto participantRequestDto = new ParticipantRequestDto();
-        participantRequestDto.setRequester(newRequest.getRequester().getId());
-        participantRequestDto.setEvent(newRequest.getEvent().getId());
-        participantRequestDto.setStatus(newRequest.getStatus());
-        participantRequestDto.setCreated(newRequest.getCreated());
+        Request newRequest = new Request(null, event, user, LocalDateTime.now(), RequestStatus.PENDING);
+        if (!event.getRequestModeration()) {
+            newRequest.setStatus(RequestStatus.CONFIRMED);
+        }
         log.info("Добавлен запрос {}", newRequest);
-        return participantRequestDto;
+        return RequestMapper.toRequestDto(requestRepository.save(newRequest));
     }
 
     @Override
@@ -70,8 +63,10 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
         log.info("Получение информации о заявках пользователя {} на участие в чужих событиях", userId);
         Collection<Request> requests = requestRepository.getAllByRequesterId(user.getId());
-        return requests.stream()
-                .map(request -> modelMapper.map(request, ParticipantRequestDto.class))
+        List<ParticipantRequestDto> requestsDto = requests.stream()
+                .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
+        log.info("Список заявок: {} ", requestsDto);
+        return requestsDto;
     }
 }

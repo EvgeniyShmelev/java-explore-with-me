@@ -1,6 +1,8 @@
 package ru.practicum.ewmmain.request.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.users.model.User;
 
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "requests")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Request {
     @Id
     @Column(name = "id")

@@ -22,9 +22,9 @@ public class PublicEventController {
     private final EventService eventService;
 
     @GetMapping("/{id}")
-    public EventFullDto getEventByIdPublic(@PathVariable Long eventId, HttpServletRequest request) {
-        log.info("Получение события по идентификатору: {}", eventId);
-        return eventService.getShortDtoById(eventId, request);
+    public EventFullDto getEventByIdPublic(@PathVariable Long id, HttpServletRequest request) {
+        log.info("Получение события по идентификатору: {}", id);
+        return eventService.getShortDtoById(id, request);
     }
 
     @GetMapping

@@ -35,6 +35,7 @@ public class PrivateEventController {
     public EventFullDto createEvent(@PathVariable Long userId,
                                     @RequestBody NewEventDto newEventDto) {
         log.info("Создание нового события: {}", newEventDto);
+        log.info("Время создания нового события: {}", newEventDto.getEventDate());
         return eventService.createEvent(userId, newEventDto);
     }
 

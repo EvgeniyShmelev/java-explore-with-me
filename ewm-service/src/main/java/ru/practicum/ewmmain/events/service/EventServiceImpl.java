@@ -60,7 +60,7 @@ public class EventServiceImpl implements EventService {
                 .add(rangeEnd, event.eventDate::before)
                 .buildAnd();
         List<Event> events = eventRepository.findAll(predicate, PageRequest.of(from, size)).getContent();
-        log.info("Найденные события {}", events);
+        log.info("Найденные события {}", events.size());
         return events.stream()
                 .map(event -> modelMapper.map(event, EventFullDto.class))
                 .collect(Collectors.toList());
@@ -152,10 +152,10 @@ public class EventServiceImpl implements EventService {
         newEvent.setLon(newEventDto.getLocation().getLon());
         newEvent.setLat(newEventDto.getLocation().getLat());
         newEvent.setState(EventStatus.PENDING);
-        log.info("Время: {}", newEvent.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        log.info("Время: {}", newEvent.getEventDate());
 
         Event eventDB = eventRepository.save(newEvent);
-        log.info("Создано новое событие: {}", eventDB);
+        log.info("Время: {}", eventDB.getEventDate());
         return modelMapper.map(eventDB, EventFullDto.class);
     }
 
