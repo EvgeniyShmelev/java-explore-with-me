@@ -52,7 +52,8 @@ public class EventServiceImpl implements EventService {
     public List<EventFullDto> getAllByAdmin(List<Long> users, List<EventStatus> states,
                                             List<Long> categories, LocalDateTime rangeStart,
                                             LocalDateTime rangeEnd, int from, int size) {
-        log.info("Поиск событий по параметрам");
+        log.info("Поиск событий по параметрам: users {}, states {}, categories {}, start {}, " +
+                "end {}, ", users, states, categories, rangeStart, rangeEnd);
         Predicate predicate = QPredicates.builder()
                 .add(users, event.initiator.id::in)
                 .add(states, event.state::in)
