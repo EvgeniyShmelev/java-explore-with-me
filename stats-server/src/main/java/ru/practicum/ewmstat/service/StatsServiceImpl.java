@@ -33,9 +33,10 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    public Collection<ViewStats> getStats(LocalDateTime start, LocalDateTime end, Collection<String> uncodedUris, Boolean unique) {
+    public Collection<ViewStats> getStats(LocalDateTime start, LocalDateTime end,
+                                          Collection<String> encodedUris, Boolean unique) {
         Collection<String> uris = new ArrayList<>();
-        for (String u : uncodedUris) {
+        for (String u : encodedUris) {
             uris.add(URLDecoder.decode(u, StandardCharsets.UTF_8));
         }
         log.info("Получение данных статистики для uri: {}", uris);

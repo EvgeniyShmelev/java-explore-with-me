@@ -19,9 +19,9 @@ public class RestClient {
     private static final String FALSE_STRING_VALUE = "false";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @Value("${stats-server-post.path}")
+    @Value("${stats-post.path}")
     private String hitPostPath;
-    @Value("${stats-server-get.path}")
+    @Value("${stats-get.path}")
     private String hitGetPath;
 
     private final RestTemplate rest;
@@ -31,12 +31,12 @@ public class RestClient {
     }
 
     public void postHit(Hit hit) {
-        log.info("Sending package to statistics server: {}", hit);
+        log.info("Отправка пакета на сервер статистики: {}", hit);
         rest.postForEntity(hitPostPath, hit, Hit.class);
     }
 
     public ViewStats getStats(int eventId, LocalDateTime start, LocalDateTime end) {
-        log.info("Requesting stats fro statistics server");
+        log.info("Запрос статистики для сервера");
         ViewStats[] stats = rest.getForObject(
                 String.format(
                         hitGetPath,

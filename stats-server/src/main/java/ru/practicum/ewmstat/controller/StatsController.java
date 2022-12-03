@@ -19,7 +19,7 @@ public class StatsController {
 
     @PostMapping("/hit")
     public void addHit(@RequestBody HitDto dto) {
-        log.info("Получен POST запрос для добавления пакета статиски: {}", dto);
+        log.info("Получен POST запрос для добавления пакета статистики: {}", dto);
         statsService.addHit(dto);
     }
 

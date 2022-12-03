@@ -17,10 +17,11 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
     List<Event> findAllByCategoryId(Long id);
 
     List<Event> findEventsByInitiatorIdIn(List<User> users,
-                                 List<EventStatus> states,
-                                 List<Category> setOfCategories,
-                                 LocalDateTime start, LocalDateTime end,
-                                 Pageable pageable);
+                                          List<EventStatus> states,
+                                          List<Category> setOfCategories,
+                                          LocalDateTime start,
+                                          LocalDateTime end,
+                                          Pageable pageable);
 
-    List<Event> findEventsByInitiatorId(Long userId, PageRequest pageRequest);
+    List<Event> findEventsByInitiatorId(Long userId, PageRequest pageRequest); //работает верно
 }

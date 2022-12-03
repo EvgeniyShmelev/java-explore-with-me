@@ -52,48 +52,18 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public List<EventFullDto> getAllByAdmin(List<Long> users, List<String> states,
+    public List<EventFullDto> getAllByAdmin(List<Long> users, List<EventStatus> states,
                                             List<Long> categories, LocalDateTime rangeStart,
                                             LocalDateTime rangeEnd, int from, int size) {
 
-        Pageable pageable = PageRequest.of(from, size, Sort.by("id"));
-
-        log.info("Список категорий {}", categories);
-
-        ArrayList<Category> categoryEntities = new ArrayList<>();
-
-
-        for (Long catId : categories) {
-            Category category = categoryRepository.findById(catId)
-                    .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + catId));
-            categoryEntities.add(category);
-        }
-
-        ArrayList<User> userEntities = new ArrayList<>();
-        for (Long userId : users) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
-            userEntities.add(user);
-        }
-
-        ArrayList<EventStatus> statesEnum = new ArrayList<>();
-        if (states != null) {
-            for (String state : states) {
-                EventStatus eventStatus = EventStatus.valueOf(state);
-                statesEnum.add(eventStatus);
-            }
-        } else {
-            statesEnum.addAll(Arrays.asList(EventStatus.values()));
-        }
-
-        List<Event> events = eventRepository.findEventsByInitiatorIdIn(
-                userEntities,
-                statesEnum,
-                categoryEntities,
-                rangeStart,
-                rangeEnd,
-                pageable
-        );
+        Predicate predicate = QPredicates.builder()
+                .add(users, event.initiator.id::in)
+                .add(states, event.state::in)
+                .add(categories, event.category.id::in)
+                .add(rangeStart, event.eventDate::after)
+                .add(rangeEnd, event.eventDate::before)
+                .buildAnd();
+        List<Event> events = eventRepository.findAll(predicate, PageRequest.of(from, size)).getContent();
 
         return events.stream()
                 .map(event -> modelMapper.map(event, EventFullDto.class))
@@ -186,6 +156,7 @@ public class EventServiceImpl implements EventService {
         newEvent.setLon(newEventDto.getLocation().getLon());
         newEvent.setLat(newEventDto.getLocation().getLat());
         newEvent.setState(EventStatus.PENDING);
+        log.info("Время: {}", newEvent.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         Event eventDB = eventRepository.save(newEvent);
         log.info("Создано новое событие: {}", eventDB);
@@ -300,7 +271,6 @@ public class EventServiceImpl implements EventService {
                 new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
                         LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
         );
-        Pageable pageable = PageRequest.of(from, size, Sort.by("id"));
 
         Predicate predicate = QPredicates.builder()
                 .add(text, txt -> event.annotation.containsIgnoreCase(txt)
