@@ -8,6 +8,7 @@ import ru.practicum.ewmmain.utill.Create;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Data
 public class EventShortDto {
@@ -18,7 +19,7 @@ public class EventShortDto {
     private Long confirmedRequests;
     @NotNull(groups = {Create.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private String eventDate;
+    private LocalDateTime eventDate;
     private Long id;
     @NotNull(groups = {Create.class})
     private UserShortDto initiator;
