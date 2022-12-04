@@ -3,6 +3,7 @@ package ru.practicum.ewmmain.events.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import ru.practicum.ewmmain.categories.dto.CategoryDto;
+import ru.practicum.ewmmain.events.model.Location;
 import ru.practicum.ewmmain.users.model.User;
 import ru.practicum.ewmmain.utill.Create;
 
@@ -22,7 +23,7 @@ public class EventFullDto {
     private String description;
     @NotNull(groups = {Create.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private String eventDate;
+    private LocalDateTime eventDate;
     private Long id;
     @NotNull(groups = {Create.class})
     private User initiator;

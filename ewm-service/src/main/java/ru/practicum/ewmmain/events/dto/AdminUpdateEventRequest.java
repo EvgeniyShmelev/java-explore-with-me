@@ -2,6 +2,7 @@ package ru.practicum.ewmmain.events.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import ru.practicum.ewmmain.events.model.Location;
 
 import java.time.LocalDateTime;
 

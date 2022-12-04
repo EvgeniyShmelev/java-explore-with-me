@@ -89,8 +89,7 @@ public class EventServiceImpl implements EventService {
             event.setEventDate(adminUpdateEventRequest.getEventDate());
         }
         if (adminUpdateEventRequest.getLocation() != null) {
-            event.setLat(adminUpdateEventRequest.getLocation().getLat());
-            event.setLon(adminUpdateEventRequest.getLocation().getLat());
+            event.setLocation(adminUpdateEventRequest.getLocation());
         }
         if (adminUpdateEventRequest.getPaid() != null) {
             event.setPaid(adminUpdateEventRequest.getPaid());
@@ -137,6 +136,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
+        log.info("Время: {}", newEventDto.getEventDate());
         Category category = categoryRepository.findById(newEventDto.getCategory())
                 .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + newEventDto.getCategory()));
         User initiator = userRepository.findById(userId)
@@ -151,13 +151,13 @@ public class EventServiceImpl implements EventService {
         }
         newEvent.setCategory(category);
         newEvent.setInitiator(initiator);
-        newEvent.setLon(newEventDto.getLocation().getLon());
-        newEvent.setLat(newEventDto.getLocation().getLat());
+        newEvent.setLocation(newEventDto.getLocation());
         newEvent.setState(EventStatus.PENDING);
         log.info("Время: {}", newEvent.getEventDate());
 
         Event eventDB = eventRepository.save(newEvent);
-        log.info("Время: {}", eventDB.getEventDate());
+        //eventDB.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        log.info("Время: {}", eventDB.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         return modelMapper.map(eventDB, EventFullDto.class);
     }
 

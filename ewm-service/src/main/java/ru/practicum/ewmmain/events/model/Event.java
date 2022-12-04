@@ -34,10 +34,8 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     private User initiator;
-    @Column(name = "lat")
-    private Float lat;
-    @Column(name = "lon")
-    private Float lon;
+    @Embedded
+    private Location location;
     @Column(name = "paid")
     private Boolean paid; //платное мероприятие?
     @Column(name = "title", nullable = false, length = 120)
