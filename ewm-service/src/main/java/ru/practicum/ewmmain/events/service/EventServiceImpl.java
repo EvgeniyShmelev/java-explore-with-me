@@ -136,7 +136,6 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
-        log.info("Время: {}", newEventDto.getEventDate());
         Category category = categoryRepository.findById(newEventDto.getCategory())
                 .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + newEventDto.getCategory()));
         User initiator = userRepository.findById(userId)
@@ -153,11 +152,9 @@ public class EventServiceImpl implements EventService {
         newEvent.setInitiator(initiator);
         newEvent.setLocation(newEventDto.getLocation());
         newEvent.setState(EventStatus.PENDING);
-        log.info("Время: {}", newEvent.getEventDate());
 
         Event eventDB = eventRepository.save(newEvent);
-        //eventDB.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        log.info("Время: {}", eventDB.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        log.info("Создано новое событие: {}", eventDB);
         return modelMapper.map(eventDB, EventFullDto.class);
     }
 
