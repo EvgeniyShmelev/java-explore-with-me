@@ -43,7 +43,7 @@ public class AdminEventController {
 
     @PatchMapping("/{eventId}/publish")
     public EventFullDto publishEvent(@PathVariable Long eventId) {
-        log.info("Опубликовано событие: {}", eventId);
+        log.info("Команда на публикацию события: {}", eventId);
         return eventService.publishByAdmin(eventId);
     }
 

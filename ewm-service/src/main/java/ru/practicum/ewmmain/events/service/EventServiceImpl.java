@@ -10,9 +10,11 @@ import ru.practicum.ewmmain.categories.model.Category;
 import ru.practicum.ewmmain.categories.repository.CategoryRepository;
 import ru.practicum.ewmmain.client.RestClient;
 import ru.practicum.ewmmain.events.dto.*;
+import ru.practicum.ewmmain.events.mapper.EventMapper;
 import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.model.EventStatus;
 import ru.practicum.ewmmain.events.model.Hit;
+import ru.practicum.ewmmain.events.model.ViewStats;
 import ru.practicum.ewmmain.events.repository.EventRepository;
 import ru.practicum.ewmmain.exception.BadRequestException;
 import ru.practicum.ewmmain.exception.ConflictException;
@@ -54,6 +56,7 @@ public class EventServiceImpl implements EventService {
                                             LocalDateTime rangeEnd, int from, int size) {
         log.info("Поиск событий по параметрам: users {}, states {}, categories {}, start {}, " +
                 "end {}, ", users, states, categories, rangeStart, rangeEnd);
+        log.info("Найденные события {}", eventRepository.findById(1L));
         Predicate predicate = QPredicates.builder()
                 .add(users, event.initiator.id::in)
                 .add(states, event.state::in)
@@ -64,7 +67,7 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.findAll(predicate, PageRequest.of(from, size)).getContent();
         log.info("Найденные события {}", events.size());
         return events.stream()
-                .map(event -> modelMapper.map(event, EventFullDto.class))
+                .map(this::toFullDto)
                 .collect(Collectors.toList());
     }
 
@@ -113,6 +116,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
         event.setPublishedOn(LocalDateTime.now());
         event.setState(EventStatus.PUBLISHED);
+        log.info("Опубликовано событие  {}", event);
         return modelMapper.map(event, EventFullDto.class);
     }
 
@@ -283,5 +287,15 @@ public class EventServiceImpl implements EventService {
         return events.stream()
                 .map(event -> modelMapper.map(event, EventShortDto.class))
                 .collect(Collectors.toList());
+    }
+
+    private EventFullDto toFullDto(Event event) {
+        log.info("Mapping event: {} to EventFullDto", event);
+        long confirmedRequests = requestRepository.findByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED).size();
+        ViewStats viewStats = statsClient.getStats(
+                event.getId().intValue(),
+                LocalDateTime.now().minusMonths(1),
+                LocalDateTime.now().plusMonths(1));
+        return EventMapper.toEventFullDto(event, confirmedRequests, viewStats.getHits().intValue());
     }
 }
