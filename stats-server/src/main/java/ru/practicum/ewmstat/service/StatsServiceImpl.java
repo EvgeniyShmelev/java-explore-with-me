@@ -39,14 +39,8 @@ public class StatsServiceImpl implements StatsService {
         for (String u : encodedUris) {
             uris.add(URLDecoder.decode(u, StandardCharsets.UTF_8));
         }
-        Collection<Hit> hits1 = statsRepository.findAll();
-        for (Hit hit : hits1) {
-            log.info("Что внутри просмотра: {}", hit);
-        }
         log.info("Получение данных статистики для uri: {}", uris);
-        Collection<Hit> hits = statsRepository.findDistinctStatByUriInAndTimestampBetween(uris, start, end);
-        log.info("Количество просмотров: {}", hits.size());
-        log.info("Количество всех просмотров: {}", statsRepository.findAll().size());
+        Collection<Hit> hits = statsRepository.findDistinctHitsByUriInAndTimestampBetween(uris, start, end);
         Collection<ViewStats> viewStats = hits.stream()
                 .map(h -> modelMapper.map(h, ViewStats.class))
                 .collect(Collectors.toList());

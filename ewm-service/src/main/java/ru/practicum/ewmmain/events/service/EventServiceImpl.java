@@ -63,9 +63,10 @@ public class EventServiceImpl implements EventService {
                 .add(rangeEnd, event.eventDate::before)
                 .buildAnd();
         List<Event> events = eventRepository.findAll(predicate, PageRequest.of(from, size)).getContent();
+
         log.info("Найденные события {}", events);
         return events.stream()
-                .map(event -> modelMapper.map(event, EventFullDto.class))
+                .map(this::toFullDto)
                 .collect(Collectors.toList());
     }
 
@@ -104,7 +105,7 @@ public class EventServiceImpl implements EventService {
         if (adminUpdateEventRequest.getRequestModeration() != null) {
             event.setRequestModeration(adminUpdateEventRequest.getRequestModeration());
         }
-        return modelMapper.map(eventRepository.save(event), EventFullDto.class);
+        return toFullDto(eventRepository.save(event));
     }
 
     @Override
@@ -116,7 +117,7 @@ public class EventServiceImpl implements EventService {
         event.setState(EventStatus.PUBLISHED);
         eventRepository.save(event);
         log.info("Опубликовано событие {} со статусом  {}", event, event.getState());
-        return modelMapper.map(event, EventFullDto.class);
+        return toFullDto(event);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
         event.setState(EventStatus.CANCELED);
-        return modelMapper.map(event, EventFullDto.class);
+        return toFullDto(event);
     }
 
     @Override
@@ -133,8 +134,9 @@ public class EventServiceImpl implements EventService {
         log.info("Список всех событий пользователя id {}", id);
         Collection<Event> events = eventRepository.findEventsByInitiatorId(id, PageRequest.of(from, size));
         return events.stream()
-                .map(event -> modelMapper.map(event, EventShortDto.class))
+                .map(this::toShortDto)
                 .collect(Collectors.toList());
+
     }
 
     @Override
@@ -158,7 +160,7 @@ public class EventServiceImpl implements EventService {
 
         Event eventDB = eventRepository.save(newEvent);
         log.info("Создано новое событие: {}", eventDB);
-        return modelMapper.map(eventDB, EventFullDto.class);
+        return toFullDto(eventDB);
     }
 
     @Override
@@ -197,7 +199,7 @@ public class EventServiceImpl implements EventService {
         log.info("Получить событие {}, добавленное пользователем: {}", eventId, userId);
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
-        return modelMapper.map(event, EventFullDto.class);
+        return toFullDto(event);
     }
 
     @Override
@@ -207,7 +209,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
         event.setState(EventStatus.CANCELED);
         Event eventDB = eventRepository.save(event);
-        return modelMapper.map(eventDB, EventFullDto.class);
+        return toFullDto(eventDB);
     }
 
     @Override
@@ -253,8 +255,7 @@ public class EventServiceImpl implements EventService {
                 new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
                         LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
         );
-        Event event = eventRepository.findById(eventId).orElseThrow(
-                () -> new NotFoundException(String.format("В БД нет события с id " + eventId)));
+        Event event = eventRepository.findByIdAndState(eventId, EventStatus.PUBLISHED);
         log.info("Просмотры Найденного события {}", event.getViews());
         long confirmedRequests = requestRepository.findByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED).size();
         log.info("Подтвержденные запросы этого события {}", confirmedRequests);
@@ -263,7 +264,8 @@ public class EventServiceImpl implements EventService {
                 LocalDateTime.now().minusMonths(1),
                 LocalDateTime.now().plusMonths(1));
         log.info("Просмотры события {}", viewStats.getHits());
-
+        event.setViews(viewStats.getHits());
+        event.setConfirmedRequests(confirmedRequests);
         return modelMapper.map(event, EventFullDto.class);
     }
 
@@ -293,7 +295,31 @@ public class EventServiceImpl implements EventService {
                     .collect(Collectors.toList());
         }
         return events.stream()
-                .map(event -> modelMapper.map(event, EventShortDto.class))
+                .map(this::toShortDto)
                 .collect(Collectors.toList());
+    }
+
+    private EventShortDto toShortDto(Event event) {
+        log.info("Конвертация события event: {} в формат EventShortDto", event);
+        long confirmedRequests = requestRepository.findByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED).size();
+        ViewStats viewStats = statsClient.getStats(
+                event.getId().intValue(),
+                LocalDateTime.now().minusMonths(1),
+                LocalDateTime.now().plusMonths(1));
+        event.setConfirmedRequests(confirmedRequests);
+        event.setViews(viewStats.getHits());
+        return modelMapper.map(event, EventShortDto.class);
+    }
+
+    private EventFullDto toFullDto(Event event) {
+        log.info("Конвертация события event: {} в формат EventFullDto", event);
+        long confirmedRequests = requestRepository.findByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED).size();
+        ViewStats viewStats = statsClient.getStats(
+                event.getId().intValue(),
+                LocalDateTime.now().minusMonths(1),
+                LocalDateTime.now().plusMonths(1));
+        event.setConfirmedRequests(confirmedRequests);
+        event.setViews(viewStats.getHits());
+        return modelMapper.map(event, EventFullDto.class);
     }
 }

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewmmain.client.RestClient;
 import ru.practicum.ewmmain.events.dto.EventFullDto;
 import ru.practicum.ewmmain.events.dto.EventShortDto;
 import ru.practicum.ewmmain.events.service.EventService;
@@ -21,7 +20,6 @@ import java.util.List;
 @Slf4j
 public class PublicEventController {
     private final EventService eventService;
-    private final RestClient restClient;
 
     @GetMapping("/{id}")
     public EventFullDto getEventByIdPublic(@PathVariable Long id, HttpServletRequest request) {
