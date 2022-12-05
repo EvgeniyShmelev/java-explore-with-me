@@ -1,14 +1,11 @@
 package ru.practicum.ewmmain.events.model;
 
 import lombok.Data;
-import lombok.ToString;
 import ru.practicum.ewmmain.categories.model.Category;
-import ru.practicum.ewmmain.compilation.model.Compilation;
 import ru.practicum.ewmmain.users.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "events")
