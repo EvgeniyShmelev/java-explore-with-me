@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmstat.dto.HitDto;
 import ru.practicum.ewmstat.dto.ViewStats;
+import ru.practicum.ewmstat.mapper.StatsMapper;
 import ru.practicum.ewmstat.model.Hit;
 import ru.practicum.ewmstat.repository.StatsRepository;
 
@@ -42,7 +43,7 @@ public class StatsServiceImpl implements StatsService {
         log.info("Получение данных статистики для uri: {}", uris);
         Collection<Hit> hits = statsRepository.findDistinctHitsByUriInAndTimestampBetween(uris, start, end);
         Collection<ViewStats> viewStats = hits.stream()
-                .map(h -> modelMapper.map(h, ViewStats.class))
+                .map(h -> StatsMapper.toViewStats(h, hits.size()))
                 .collect(Collectors.toList());
         if (viewStats.isEmpty()) {
             return List.of(new ViewStats("unavailable", "unavailable", 0L));

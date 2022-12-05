@@ -10,7 +10,6 @@ import ru.practicum.ewmmain.categories.model.Category;
 import ru.practicum.ewmmain.categories.repository.CategoryRepository;
 import ru.practicum.ewmmain.client.RestClient;
 import ru.practicum.ewmmain.events.dto.*;
-import ru.practicum.ewmmain.events.mapper.EventMapper;
 import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.model.EventStatus;
 import ru.practicum.ewmmain.events.model.Hit;
@@ -306,7 +305,10 @@ public class EventServiceImpl implements EventService {
                 event.getId().intValue(),
                 LocalDateTime.now().minusMonths(1),
                 LocalDateTime.now().plusMonths(1));
-        return EventMapper.toEventShortDto(event, confirmedRequests, viewStats.getHits());
+        EventShortDto eventShortDto = modelMapper.map(event, EventShortDto.class);
+        eventShortDto.setConfirmedRequests(confirmedRequests);
+        eventShortDto.setViews(viewStats.getHits());
+        return eventShortDto;
     }
 
     private EventFullDto toFullDto(Event event) {
@@ -318,9 +320,7 @@ public class EventServiceImpl implements EventService {
                 LocalDateTime.now().plusMonths(1));
         EventFullDto eventFullDto = modelMapper.map(event, EventFullDto.class);
         eventFullDto.setConfirmedRequests(confirmedRequests);
-        log.info("confirmedRequests события event: {} ", eventFullDto.getConfirmedRequests());
         eventFullDto.setViews(viewStats.getHits());
-        log.info("просмотры события event: {} ", eventFullDto.getViews());
         return eventFullDto;
     }
 }
