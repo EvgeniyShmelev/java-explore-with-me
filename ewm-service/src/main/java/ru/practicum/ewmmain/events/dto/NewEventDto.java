@@ -18,7 +18,6 @@ public class NewEventDto {
     @NotBlank(groups = {Create.class})
     private String description;
     @NotNull(groups = {Create.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @NotNull(groups = {Create.class})
     private Location location;

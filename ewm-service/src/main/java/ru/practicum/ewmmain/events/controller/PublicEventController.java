@@ -23,8 +23,8 @@ public class PublicEventController {
 
     @GetMapping("/{id}")
     public EventFullDto getEventByIdPublic(@PathVariable Long id, HttpServletRequest request) {
-        log.info("РџРѕР»СѓС‡РµРЅРёРµ СЃРѕР±С‹С‚РёСЏ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ: {}", id);
-        log.info("Р РµР·СѓР»СЊС‚Р°С‚С‹ Р·Р°РїСЂРѕСЃР° РґРѕР»Р¶РЅС‹ РґРѕР±Р°РІРёС‚СЊСЃСЏ РІ СЃС‚Р°С‚РёСЃС‚РёРєСѓ");
+        log.info("Получение события по идентификатору: {}", id);
+        log.info("Результаты запроса должны добавиться в статистику");
         return eventService.getShortDtoById(id, request);
     }
 
@@ -41,7 +41,7 @@ public class PublicEventController {
                                           @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                           @RequestParam(defaultValue = "10") @Positive int size,
                                           HttpServletRequest request) {
-        log.info("РџРѕР»СѓС‡РµРЅ Р·Р°РїСЂРѕСЃ СЃРїРёСЃРєР° СЃРѕР±С‹С‚РёР№ {}", text);
+        log.info("Получен запрос списка событий {}", text);
         return eventService.getAll(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                 sort, from, size, request);
     }

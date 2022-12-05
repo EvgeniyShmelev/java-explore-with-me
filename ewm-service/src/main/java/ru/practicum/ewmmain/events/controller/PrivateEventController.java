@@ -27,42 +27,42 @@ public class PrivateEventController {
                                                         @PositiveOrZero int from,
                                                         @RequestParam(required = false, defaultValue = "10")
                                                         @Positive int size) {
-        log.info("РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° СЃРѕР±С‹С‚РёР№, РґРѕР±Р°РІР»РµРЅРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј: {}", userId);
+        log.info("Получение списка событий, добавленных пользователем: {}", userId);
         return eventService.getAllEventsByUser(userId, from, size);
     }
 
     @PostMapping
     public EventFullDto createEvent(@PathVariable Long userId,
                                     @RequestBody NewEventDto newEventDto) {
-        log.info("РЎРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ СЃРѕР±С‹С‚РёСЏ: {}", newEventDto);
+        log.info("Создание нового события: {}", newEventDto);
         return eventService.createEvent(userId, newEventDto);
     }
 
     @PatchMapping
     public EventFullDto updateEvent(@PathVariable Long userId,
                                     @RequestBody UpdateEventRequest updateEventRequest) {
-        log.info("РћР±РЅРѕРІР»РµРЅРѕ СЃРѕР±С‹С‚РёРµ: {}", updateEventRequest);
+        log.info("Обновлено событие: {}", updateEventRequest);
         return eventService.updateUserEvent(userId, updateEventRequest);
     }
 
     @GetMapping("{eventId}")
     public EventFullDto getEventById(@PathVariable Long userId,
                                      @PathVariable Long eventId) {
-        log.info("РџРѕР»СѓС‡РµРЅРёРµ СЃРѕР±С‹С‚РёСЏ {}, РґРѕР±Р°РІР»РµРЅРЅРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј: {}", eventId, userId);
+        log.info("Получение события {}, добавленного пользователем: {}", eventId, userId);
         return eventService.getUserEvent(userId, eventId);
     }
 
     @PatchMapping("{eventId}")
     public EventFullDto cancelEvent(@PathVariable Long userId,
                                     @PathVariable Long eventId) {
-        log.info("РћС‚РјРµРЅР° СЃРѕР±С‹С‚РёСЏ: {}", eventId);
+        log.info("Отмена события: {}", eventId);
         return eventService.cancelUserEvent(userId, eventId);
     }
 
     @GetMapping("{eventId}/requests")
     public Collection<ParticipantRequestDto> getAllRequestsByEvent(@PathVariable(required = true) Long userId,
                                                                    @PathVariable(required = true) Long eventId) {
-        log.info("РџРѕР»СѓС‡РµРЅРёРµ Р·Р°РїСЂРѕСЃРѕРІ РЅР° СѓС‡Р°СЃС‚РёРµ РІ СЃРѕР±С‹С‚РёРё {}, РґРѕР±Р°РІР»РµРЅРЅРѕРј РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј: {}", eventId, userId);
+        log.info("Получение запросов на участие в событии {}, добавленном пользователем: {}", eventId, userId);
         return eventService.getEventRequests(userId, eventId);
     }
 
@@ -70,7 +70,7 @@ public class PrivateEventController {
     public ParticipantRequestDto confirmRequest(@PathVariable(required = true) Long userId,
                                                 @PathVariable(required = true) Long eventId,
                                                 @PathVariable(required = true) Long reqId) {
-        log.info("РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ С‡СѓР¶РѕР№ Р·Р°СЏРІРєРё: {}, РЅР° СѓС‡Р°СЃС‚РёРµ РІ СЃРѕР±С‹С‚РёРё {}", reqId, eventId);
+        log.info("Подтверждение чужой заявки: {}, на участие в событии {}", reqId, eventId);
         return eventService.confirmRequest(userId, eventId, reqId);
     }
 
@@ -78,7 +78,7 @@ public class PrivateEventController {
     public ParticipantRequestDto rejectRequest(@PathVariable(required = true) Long userId,
                                                @PathVariable(required = true) Long eventId,
                                                @PathVariable(required = true) Long reqId) {
-        log.info("РћС‚РєР»РѕРЅРµРЅРёРµ С‡СѓР¶РѕР№ Р·Р°СЏРІРєРё: {}, РЅР° СѓС‡Р°СЃС‚РёРµ РІ СЃРѕР±С‹С‚РёРё {}", reqId, eventId);
+        log.info("Отклонение чужой заявки: {}, на участие в событии {}", reqId, eventId);
         return eventService.rejectRequest(userId, eventId, reqId);
     }
 }

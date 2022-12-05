@@ -2,8 +2,8 @@ package ru.practicum.ewmmain.request.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.repository.EventRepository;
 import ru.practicum.ewmmain.exception.BadRequestException;
@@ -28,31 +28,32 @@ public class RequestServiceImpl implements RequestService {
     private final UserRepository userRepository;
     public final EventRepository eventRepository;
     private final RequestRepository requestRepository;
-    private final ModelMapper modelMapper;
 
     @Override
+    @Transactional
     public ParticipantRequestDto add(Long userId, Long eventId) {
         if (eventId == null) {
-            throw new BadRequestException("EventId РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЂР°РІРµРЅ 0");
+            throw new BadRequestException("EventId не может быть null");
         }
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id " + userId));
+                .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
-        log.info("Р”РѕР±Р°РІР»РµРЅРёРµ Р·Р°РїСЂРѕСЃР° РѕС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id {} РЅР° СѓС‡Р°СЃС‚РёРµ РІ СЃРѕР±С‹С‚РёРё СЃ id {}", userId, eventId);
+                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+        log.info("Добавление запроса от пользователя с id {} на участие в событии с id {}", userId, eventId);
         Request newRequest = new Request(null, event, user, LocalDateTime.now(), RequestStatus.PENDING);
         if (!event.getRequestModeration()) {
             newRequest.setStatus(RequestStatus.CONFIRMED);
         }
-        log.info("Р”РѕР±Р°РІР»РµРЅ Р·Р°РїСЂРѕСЃ {}", newRequest);
+        log.info("Добавлен запрос {}", newRequest);
         return RequestMapper.toRequestDto(requestRepository.save(newRequest));
     }
 
     @Override
+    @Transactional
     public ParticipantRequestDto update(Long userId, Long requestId) {
         Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ Р·Р°РїСЂРѕСЃР° СЃ id " + requestId));
-        log.info("РћС‚РјРµРЅР° Р·Р°РїСЂРѕСЃР° РѕС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id {} РЅР° СѓС‡Р°СЃС‚РёРµ РІ СЃРѕР±С‹С‚РёРё СЃ id {}", userId, requestId);
+                .orElseThrow(() -> new NotFoundException("В БД нет запроса с id " + requestId));
+        log.info("Отмена запроса от пользователя с id {} на участие в событии с id {}", userId, requestId);
         request.setStatus(RequestStatus.CANCELED);
         return RequestMapper.toRequestDto(requestRepository.save(request));
     }
@@ -60,13 +61,13 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public List<ParticipantRequestDto> getAll(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id " + userId));
-        log.info("РџРѕР»СѓС‡РµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё Рѕ Р·Р°СЏРІРєР°С… РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ {} РЅР° СѓС‡Р°СЃС‚РёРµ РІ С‡СѓР¶РёС… СЃРѕР±С‹С‚РёСЏС…", userId);
+                .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
+        log.info("Получение информации о заявках пользователя {} на участие в чужих событиях", userId);
         Collection<Request> requests = requestRepository.getAllByRequesterId(user.getId());
         List<ParticipantRequestDto> requestsDto = requests.stream()
                 .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
-        log.info("РЎРїРёСЃРѕРє Р·Р°СЏРІРѕРє: {} ", requestsDto);
+        log.info("Список заявок: {} ", requestsDto);
         return requestsDto;
     }
 }

@@ -28,19 +28,19 @@ public class UserController {
                                            @PositiveOrZero int from,
                                            @RequestParam(required = false, defaultValue = "10")
                                            @Positive int size) {
-        log.info("РџРѕР»СѓС‡РµРЅ Р·Р°РїСЂРѕСЃ СЃРїРёСЃРєР° РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№");
+        log.info("Получен запрос списка пользователей");
         return userService.getAll(ids, from, size);
     }
 
     @PostMapping
     public UserDto add(@Valid @RequestBody NewUserRequest newUserRequest) {
-        log.info("РЎРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ: {}", newUserRequest);
+        log.info("Создание нового пользователя: {}", newUserRequest);
         return userService.add(newUserRequest);
     }
 
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {
-        log.info("РЈРґР°Р»РµРЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ {}", userId);
+        log.info("Удален пользователь {}", userId);
         userService.deleteUser(userId);
     }
 }

@@ -16,19 +16,19 @@ public class AdminCategoryController {
 
     @PostMapping
     public CategoryDto createCategory(@RequestBody NewCategoryDto newCategoryDto) {
-        log.info("РЎРѕР·РґР°РЅРёРµ РЅРѕРІРѕР№ РєР°С‚РµРіРѕСЂРёРё: {}", newCategoryDto.getName());
+        log.info("Создание новой категории: {}", newCategoryDto.getName());
         return categoryService.add(newCategoryDto);
     }
 
     @PatchMapping
     public CategoryDto updateCategory(@RequestBody CategoryDto categoryDto) {
-        log.info("РР·РјРµРЅРµРЅРёРµ РєР°С‚РµРіРѕСЂРёРё {}", categoryDto);
+        log.info("Изменение категории {}", categoryDto);
         return categoryService.update(categoryDto);
     }
 
     @DeleteMapping("/{catId}")
     public void deleteCategory(@PathVariable Long catId) {
-        log.info("РЈРґР°Р»РµРЅРёРµ РєР°С‚РµРіРѕСЂРёСЏ {}", catId);
+        log.info("Удаление категория {}", catId);
         categoryService.delete(catId);
     }
 }

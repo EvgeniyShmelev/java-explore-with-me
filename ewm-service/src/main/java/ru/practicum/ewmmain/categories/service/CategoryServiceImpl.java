@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmain.categories.dto.CategoryDto;
 import ru.practicum.ewmmain.categories.dto.NewCategoryDto;
 import ru.practicum.ewmmain.categories.model.Category;
@@ -34,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getAll(int from, int size) {
-        log.info("РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РІСЃРµС… РєР°С‚РµРіРѕСЂРёР№");
+        log.info("Получение списка всех категорий");
         Pageable pageable = PageRequest.of(from, size, Sort.by("id"));
         return categoryRepository.findAll(pageable).stream()
                 .map(category -> modelMapper.map(category, CategoryDto.class))
@@ -43,52 +44,55 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryDtoById(Long id) {
-        log.info("РџРѕР»СѓС‡РµРЅРёРµ РєР°С‚РµРіРѕСЂРёРё РїРѕ id {}", id);
+        log.info("Получение категории по id {}", id);
         Category category = categoryRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format("Category with id %s has not been found", id)));
         return modelMapper.map(category, CategoryDto.class);
     }
 
     @Override
+    @Transactional
     public CategoryDto add(NewCategoryDto newCategoryDto) {
-        log.info("Р”РѕР±Р°РІР»РµРЅРёРµ РєР°С‚РµРіРѕСЂРёРё: {}", newCategoryDto);
+        log.info("Добавление категории: {}", newCategoryDto);
         Category category = modelMapper.map(newCategoryDto, Category.class);
         if (category.getName() == null || category.getName().isBlank()) {
-            throw new BadRequestException("РќРµС‚ РЅР°Р·РІР°РЅРёСЏ РєР°С‚РµРіРѕСЂРёРё.");
+            throw new BadRequestException("Нет названия категории.");
         }
         Optional<Category> categoryOptional = categoryRepository.getCategoryByName(category.getName());
         if (categoryOptional.isPresent()) {
-            throw new ConflictException("РљР°С‚РµРіРѕСЂРёСЏ СЃ РёРјРµРЅРµРј " + category.getName() + " СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
+            throw new ConflictException("Категория с именем " + category.getName() + " уже существует");
         }
         categoryRepository.save(category);
-        log.info("РљР°С‚РµРіРѕСЂРёСЏ СЃ id " + category.getId() + " Р±С‹Р»Рѕ СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅР°.");
+        log.info("Категория с id " + category.getId() + " было успешно добавлена.");
         return modelMapper.map(category, CategoryDto.class);
     }
 
     @Override
+    @Transactional
     public CategoryDto update(CategoryDto categoryDto) {
         Category category = modelMapper.map(categoryDto, Category.class);
         if (category.getName() == null || category.getName().isBlank()) {
-            throw new BadRequestException("РќР°Р·РІР°РЅРёРµ РєР°С‚РµРіРѕСЂРёРё РїСѓСЃС‚РѕРµ!");
+            throw new BadRequestException("Название категории пустое!");
         }
         Optional<Category> categoryOptional = categoryRepository.getCategoryByName(category.getName());
         if (categoryOptional.isPresent()) {
-            throw new ConflictException("РљР°С‚РµРіРѕСЂРёСЏ СЃ РёРјРµРЅРµРј " + category.getName() + " СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
+            throw new ConflictException("Категория с именем " + category.getName() + " уже существует");
         }
         categoryRepository.save(category);
-        log.info("РћР±РЅРѕРІР»РµРЅР° РєР°С‚РµРіРѕСЂРёСЏ СЃ id {}", categoryDto.getId());
+        log.info("Обновлена категория с id {}", categoryDto.getId());
         return modelMapper.map(category, CategoryDto.class);
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        log.info("РЈРґР°Р»РµРЅРёРµ РєР°С‚РµРіРѕСЂРёСЏ СЃ id {}", id);
+        log.info("Удаление категория с id {}", id);
         CategoryDto categoryDto = getCategoryDtoById(id);
         Category category = modelMapper.map(categoryDto, Category.class);
         Collection<Event> eventsByCategory = eventRepository.findAllByCategoryId(id);
         if (eventsByCategory.isEmpty()) {
             categoryRepository.delete(category);
-            log.info("РљР°С‚РµРіРѕСЂРёСЏ СЃ id {} СѓРґР°Р»РµРЅР°", id);
+            log.info("Категория с id {} удалена", id);
         } else {
             throw new ForbiddenException(String.format("Category with id %s contains events", id));
         }

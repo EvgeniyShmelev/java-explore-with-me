@@ -17,21 +17,21 @@ public class RequestController {
 
     @GetMapping("/{userId}/requests")
     public Collection<ParticipantRequestDto> getAllRequestsByUser(@PathVariable(required = true) Long userId) {
-        log.info("РџРѕР»СѓС‡РµРЅРёРµ Р·Р°СЏРІРѕРє РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ {} РЅР° СѓС‡Р°СЃС‚РёРµ РІ С‡СѓР¶РёС… СЃРѕР±С‹С‚РёСЏС…", userId);
+        log.info("Получение заявок пользователя {} на участие в чужих событиях", userId);
         return requestService.getAll(userId);
     }
 
     @PostMapping("/{userId}/requests")
     public ParticipantRequestDto createRequest(@PathVariable Long userId,
                                                @RequestParam(required = false) Long eventId) {
-        log.info("Р”РѕР±Р°РІР»РµРЅ Р·Р°РїСЂРѕСЃ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ: {} РЅР° СѓС‡Р°СЃС‚РёРµ РІ СЃРѕР±С‹С‚РёРё: {}", userId, eventId);
+        log.info("Добавлен запрос пользователя: {} на участие в событии: {}", userId, eventId);
         return requestService.add(userId, eventId);
     }
 
     @PatchMapping("/{userId}/requests/{requestId}/cancel")
     public ParticipantRequestDto update(@PathVariable(required = true) Long userId,
                                         @PathVariable(required = true) Long requestId) {
-        log.info("РћС‚РјРµРЅР° Р·Р°СЏРІРєРё: {}, РЅР° СѓС‡Р°СЃС‚РёРµ РІ СЃРѕР±С‹С‚РёРё {}", requestId, userId);
+        log.info("Отмена заявки: {}, на участие в событии {}", requestId, userId);
         return requestService.update(userId, requestId);
     }
 }

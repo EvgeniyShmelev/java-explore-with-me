@@ -22,7 +22,6 @@ public class EventShortDto {
     private Category category;
     private Long confirmedRequests;
     @NotNull(groups = {Create.class})
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private Long id;
     @NotNull(groups = {Create.class})
