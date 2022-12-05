@@ -1,6 +1,5 @@
 package ru.practicum.ewmmain.events.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import ru.practicum.ewmmain.events.model.Location;
 import ru.practicum.ewmmain.utill.Create;
