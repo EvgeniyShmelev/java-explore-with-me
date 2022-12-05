@@ -10,6 +10,7 @@ import ru.practicum.ewmmain.categories.model.Category;
 import ru.practicum.ewmmain.categories.repository.CategoryRepository;
 import ru.practicum.ewmmain.client.RestClient;
 import ru.practicum.ewmmain.events.dto.*;
+import ru.practicum.ewmmain.events.mapper.EventMapper;
 import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.model.EventStatus;
 import ru.practicum.ewmmain.events.model.Hit;
@@ -113,11 +114,19 @@ public class EventServiceImpl implements EventService {
         log.info("Публикация события с id {}", eventId);
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
-        event.setPublishedOn(LocalDateTime.now());
-        event.setState(EventStatus.PUBLISHED);
-        eventRepository.save(event);
-        log.info("Опубликовано событие {} со статусом  {}", event, event.getState());
-        return toFullDto(event);
+        if (event.getState().equals(EventStatus.PENDING)) {
+            event.setState(EventStatus.PUBLISHED);
+            event.setRequestModeration(true);
+            Event eventSave = eventRepository.save(event);
+            log.info("Опубликовано событие с id {}", eventId);
+            return toFullDto(eventSave);
+        } else if (event.getState().equals(EventStatus.CANCELED)) {
+            throw new NotFoundException(
+                    "Событие отменено");
+        } else {
+            throw new NotFoundException(
+                    "Событие уже опубликовано");
+        }
     }
 
     @Override
@@ -255,18 +264,9 @@ public class EventServiceImpl implements EventService {
                 new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
                         LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
         );
-        Event event = eventRepository.findByIdAndState(eventId, EventStatus.PUBLISHED);
-        log.info("Просмотры Найденного события {}", event.getViews());
-        long confirmedRequests = requestRepository.findByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED).size();
-        log.info("Подтвержденные запросы этого события {}", confirmedRequests);
-        ViewStats viewStats = statsClient.getStats(
-                event.getId().intValue(),
-                LocalDateTime.now().minusMonths(1),
-                LocalDateTime.now().plusMonths(1));
-        log.info("Просмотры события {}", viewStats.getHits());
-        event.setViews(viewStats.getHits());
-        event.setConfirmedRequests(confirmedRequests);
-        return modelMapper.map(event, EventFullDto.class);
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+        return toFullDto(event);
     }
 
     @Override
@@ -306,9 +306,7 @@ public class EventServiceImpl implements EventService {
                 event.getId().intValue(),
                 LocalDateTime.now().minusMonths(1),
                 LocalDateTime.now().plusMonths(1));
-        event.setConfirmedRequests(confirmedRequests);
-        event.setViews(viewStats.getHits());
-        return modelMapper.map(event, EventShortDto.class);
+        return EventMapper.toEventShortDto(event, confirmedRequests, viewStats.getHits());
     }
 
     private EventFullDto toFullDto(Event event) {
@@ -318,8 +316,11 @@ public class EventServiceImpl implements EventService {
                 event.getId().intValue(),
                 LocalDateTime.now().minusMonths(1),
                 LocalDateTime.now().plusMonths(1));
-        event.setConfirmedRequests(confirmedRequests);
-        event.setViews(viewStats.getHits());
-        return modelMapper.map(event, EventFullDto.class);
+        EventFullDto eventFullDto = modelMapper.map(event, EventFullDto.class);
+        eventFullDto.setConfirmedRequests(confirmedRequests);
+        log.info("confirmedRequests события event: {} ", eventFullDto.getConfirmedRequests());
+        eventFullDto.setViews(viewStats.getHits());
+        log.info("просмотры события event: {} ", eventFullDto.getViews());
+        return eventFullDto;
     }
 }

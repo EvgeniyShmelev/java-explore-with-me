@@ -48,9 +48,4 @@ public class Event {
     private Boolean requestModeration;
     @Enumerated(EnumType.STRING)
     private EventStatus state;
-    @Column(name = "views")
-    private Long views;
-    @ManyToMany(mappedBy = "events")
-    @ToString.Exclude
-    Set<Compilation> compilations;
 }

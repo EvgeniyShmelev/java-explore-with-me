@@ -47,11 +47,6 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             throw new ConflictException("Пользователь с именем " + user.getName() + "уже существует");
         }
-        //почему код ниже не работает?
-        /*if (userRepository.findAll().contains(user.getEmail())) {
-            throw new ConflictException(
-                    "Пользователь с именем " + user.getName() + " уже существует.");
-        }*/
         User newUser = userRepository.save(user);
         log.info("Добавлен пользователь: {}", newUser);
         return modelMapper.map(newUser, UserDto.class);
