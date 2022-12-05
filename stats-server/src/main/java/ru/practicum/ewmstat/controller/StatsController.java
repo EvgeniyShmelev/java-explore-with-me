@@ -3,6 +3,7 @@ package ru.practicum.ewmstat.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmstat.dto.HitDto;
 import ru.practicum.ewmstat.dto.ViewStats;
@@ -14,6 +15,7 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class StatsController {
     private final StatsService statsService;
 
@@ -28,7 +30,7 @@ public class StatsController {
                                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                           @RequestParam Collection<String> uris,
                                           @RequestParam(defaultValue = "false") Boolean unique) {
-        log.info("Received GET request on /stats");
+        log.info("Получен Get запрос. Необходимо добавить в статистику");
         return statsService.getStats(start, end, uris, unique);
     }
 }

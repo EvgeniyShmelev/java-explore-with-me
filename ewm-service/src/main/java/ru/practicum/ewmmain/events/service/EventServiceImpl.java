@@ -13,6 +13,7 @@ import ru.practicum.ewmmain.events.dto.*;
 import ru.practicum.ewmmain.events.model.Event;
 import ru.practicum.ewmmain.events.model.EventStatus;
 import ru.practicum.ewmmain.events.model.Hit;
+import ru.practicum.ewmmain.events.model.ViewStats;
 import ru.practicum.ewmmain.events.repository.EventRepository;
 import ru.practicum.ewmmain.exception.BadRequestException;
 import ru.practicum.ewmmain.exception.ConflictException;
@@ -54,7 +55,6 @@ public class EventServiceImpl implements EventService {
                                             LocalDateTime rangeEnd, int from, int size) {
         log.info("Поиск событий по параметрам: users {}, states {}, categories {}, start {}, " +
                 "end {}, ", users, states, categories, rangeStart, rangeEnd);
-        log.info("Список всех событий {}", eventRepository.findAll());
         Predicate predicate = QPredicates.builder()
                 .add(users, event.initiator.id::in)
                 .add(states, event.state::in)
@@ -62,14 +62,7 @@ public class EventServiceImpl implements EventService {
                 .add(rangeStart, event.eventDate::after)
                 .add(rangeEnd, event.eventDate::before)
                 .buildAnd();
-        log.info("Полученный предикат {}", predicate);
         List<Event> events = eventRepository.findAll(predicate, PageRequest.of(from, size)).getContent();
-
-        for (Event event : eventRepository.findAll()) {
-            log.info("Полученная аннотация {}", event.getAnnotation());
-            log.info("Полученный титульник {}", event.getTitle());
-            log.info("Полученный статус {}", event.getState());
-        }
         log.info("Найденные события {}", events);
         return events.stream()
                 .map(event -> modelMapper.map(event, EventFullDto.class))
@@ -262,6 +255,15 @@ public class EventServiceImpl implements EventService {
         );
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new NotFoundException(String.format("В БД нет события с id " + eventId)));
+        log.info("Просмотры Найденного события {}", event.getViews());
+        long confirmedRequests = requestRepository.findByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED).size();
+        log.info("Подтвержденные запросы этого события {}", confirmedRequests);
+        ViewStats viewStats = statsClient.getStats(
+                event.getId().intValue(),
+                LocalDateTime.now().minusMonths(1),
+                LocalDateTime.now().plusMonths(1));
+        log.info("Просмотры события {}", viewStats.getHits());
+
         return modelMapper.map(event, EventFullDto.class);
     }
 
