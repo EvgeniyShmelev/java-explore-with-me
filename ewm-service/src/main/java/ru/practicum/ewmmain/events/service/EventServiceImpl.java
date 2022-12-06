@@ -54,7 +54,7 @@ public class EventServiceImpl implements EventService {
     public List<EventFullDto> getAllByAdmin(List<Long> users, List<EventStatus> states,
                                             List<Long> categories, LocalDateTime rangeStart,
                                             LocalDateTime rangeEnd, int from, int size) {
-        log.info("Поиск событий по параметрам: users {}, states {}, categories {}, start {}, " +
+        log.info("РџРѕРёСЃРє СЃРѕР±С‹С‚РёР№ РїРѕ РїР°СЂР°РјРµС‚СЂР°Рј: users {}, states {}, categories {}, start {}, " +
                 "end {}, ", users, states, categories, rangeStart, rangeEnd);
         Predicate predicate = QPredicates.builder()
                 .add(users, event.initiator.id::in)
@@ -65,7 +65,7 @@ public class EventServiceImpl implements EventService {
                 .buildAnd();
         List<Event> events = eventRepository.findAll(predicate, PageRequest.of(from, size)).getContent();
 
-        log.info("Найденные события {}", events);
+        log.info("РќР°Р№РґРµРЅРЅС‹Рµ СЃРѕР±С‹С‚РёСЏ {}", events);
         return events.stream()
                 .map(this::toFullDto)
                 .collect(Collectors.toList());
@@ -75,10 +75,10 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventFullDto updateByAdmin(Long eventId, AdminUpdateEventRequest adminUpdateEventRequest) {
         if (adminUpdateEventRequest == null) {
-            throw new IllegalArgumentException("Объект пустой");
+            throw new IllegalArgumentException("РћР±СЉРµРєС‚ РїСѓСЃС‚РѕР№");
         }
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
 
         if (adminUpdateEventRequest.getAnnotation() != null) {
             event.setAnnotation(adminUpdateEventRequest.getAnnotation());
@@ -113,37 +113,37 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventFullDto publishByAdmin(Long eventId) {
-        log.info("Публикация события с id {}", eventId);
+        log.info("РџСѓР±Р»РёРєР°С†РёСЏ СЃРѕР±С‹С‚РёСЏ СЃ id {}", eventId);
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
         if (event.getState().equals(EventStatus.PENDING)) {
             event.setState(EventStatus.PUBLISHED);
             event.setRequestModeration(true);
             Event eventSave = eventRepository.save(event);
-            log.info("Опубликовано событие с id {}", eventId);
+            log.info("РћРїСѓР±Р»РёРєРѕРІР°РЅРѕ СЃРѕР±С‹С‚РёРµ СЃ id {}", eventId);
             return toFullDto(eventSave);
         } else if (event.getState().equals(EventStatus.CANCELED)) {
             throw new NotFoundException(
-                    "Событие отменено");
+                    "РЎРѕР±С‹С‚РёРµ РѕС‚РјРµРЅРµРЅРѕ");
         } else {
             throw new NotFoundException(
-                    "Событие уже опубликовано");
+                    "РЎРѕР±С‹С‚РёРµ СѓР¶Рµ РѕРїСѓР±Р»РёРєРѕРІР°РЅРѕ");
         }
     }
 
     @Override
     @Transactional
     public EventFullDto rejectDyAdmin(Long eventId) {
-        log.info("Отклонение события id {}", eventId);
+        log.info("РћС‚РєР»РѕРЅРµРЅРёРµ СЃРѕР±С‹С‚РёСЏ id {}", eventId);
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
         event.setState(EventStatus.CANCELED);
         return toFullDto(event);
     }
 
     @Override
     public List<EventShortDto> getAllEventsByUser(Long id, int from, int size) {
-        log.info("Список всех событий пользователя id {}", id);
+        log.info("РЎРїРёСЃРѕРє РІСЃРµС… СЃРѕР±С‹С‚РёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ id {}", id);
         Collection<Event> events = eventRepository.findEventsByInitiatorId(id, PageRequest.of(from, size));
         return events.stream()
                 .map(this::toShortDto)
@@ -155,16 +155,16 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
         Category category = categoryRepository.findById(newEventDto.getCategory())
-                .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + newEventDto.getCategory()));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РєР°С‚РµРіРѕСЂРёРё СЃ id " + newEventDto.getCategory()));
         User initiator = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id " + userId));
         Event newEvent = modelMapper.map(newEventDto, Event.class);
         if (newEvent.getAnnotation() == null || newEvent.getAnnotation().isBlank()) {
-            throw new BadRequestException("Нет описания события.");
+            throw new BadRequestException("РќРµС‚ РѕРїРёСЃР°РЅРёСЏ СЃРѕР±С‹С‚РёСЏ.");
         }
         if (categoryRepository.findAll().contains(newEvent.getAnnotation())) {
             throw new ConflictException(
-                    "Событие " + newEvent.getAnnotation() + " уже существует .");
+                    "РЎРѕР±С‹С‚РёРµ " + newEvent.getAnnotation() + " СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚ .");
         }
         newEvent.setCategory(category);
         newEvent.setInitiator(initiator);
@@ -172,18 +172,18 @@ public class EventServiceImpl implements EventService {
         newEvent.setState(EventStatus.PENDING);
 
         Event eventDB = eventRepository.save(newEvent);
-        log.info("Создано новое событие: {}", eventDB);
+        log.info("РЎРѕР·РґР°РЅРѕ РЅРѕРІРѕРµ СЃРѕР±С‹С‚РёРµ: {}", eventDB);
         return toFullDto(eventDB);
     }
 
     @Override
     @Transactional
     public EventFullDto updateUserEvent(Long userId, UpdateEventRequest updateEventRequest) {
-        log.info("Обновление события: {}", updateEventRequest);
+        log.info("РћР±РЅРѕРІР»РµРЅРёРµ СЃРѕР±С‹С‚РёСЏ: {}", updateEventRequest);
         Event updateEvent = eventRepository.findById(updateEventRequest.getEventId())
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + updateEventRequest.getEventId()));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + updateEventRequest.getEventId()));
         Category category = categoryRepository.findById(updateEventRequest.getCategory())
-                .orElseThrow(() -> new NotFoundException("В БД нет категории с id " + updateEventRequest.getCategory()));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РєР°С‚РµРіРѕСЂРёРё СЃ id " + updateEventRequest.getCategory()));
         updateEvent.setCategory(category);
         if (updateEventRequest.getAnnotation() != null) {
             updateEvent.setAnnotation(updateEventRequest.getAnnotation());
@@ -210,18 +210,18 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getUserEvent(Long userId, Long eventId) {
-        log.info("Получить событие {}, добавленное пользователем: {}", eventId, userId);
+        log.info("РџРѕР»СѓС‡РёС‚СЊ СЃРѕР±С‹С‚РёРµ {}, РґРѕР±Р°РІР»РµРЅРЅРѕРµ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј: {}", eventId, userId);
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
         return toFullDto(event);
     }
 
     @Override
     @Transactional
     public EventFullDto cancelUserEvent(Long userId, Long eventId) {
-        log.info("Отмена события с id {}", eventId);
+        log.info("РћС‚РјРµРЅР° СЃРѕР±С‹С‚РёСЏ СЃ id {}", eventId);
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
         event.setState(EventStatus.CANCELED);
         Event eventDB = eventRepository.save(event);
         return toFullDto(eventDB);
@@ -230,10 +230,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<ParticipantRequestDto> getEventRequests(Long userId, Long eventId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id " + userId));
 
         eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
 
         Collection<Request> requests = requestRepository.getAllByEventId(eventId);
         return requests.stream()
@@ -244,13 +244,13 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public ParticipantRequestDto confirmRequest(Long userId, Long eventId, Long requestId) {
-        log.info("Получение всех подтвержденных запросов пользователя с id {}", userId);
+        log.info("РџРѕР»СѓС‡РµРЅРёРµ РІСЃРµС… РїРѕРґС‚РІРµСЂР¶РґРµРЅРЅС‹С… Р·Р°РїСЂРѕСЃРѕРІ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id {}", userId);
         userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id " + userId));
         eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
         Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new NotFoundException("В БД нет запроса с id " + requestId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ Р·Р°РїСЂРѕСЃР° СЃ id " + requestId));
         request.setStatus(RequestStatus.CONFIRMED);
         return RequestMapper.toRequestDto(requestRepository.save(request));
     }
@@ -259,22 +259,22 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public ParticipantRequestDto rejectRequest(Long userId, Long eventId, Long requestId) {
         Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new NotFoundException("В БД нет запроса с id " + requestId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ Р·Р°РїСЂРѕСЃР° СЃ id " + requestId));
         request.setStatus(RequestStatus.REJECTED);
-        log.info("Изменение статуса события на {}, для запроса с id: {}", request.getStatus(), requestId);
+        log.info("РР·РјРµРЅРµРЅРёРµ СЃС‚Р°С‚СѓСЃР° СЃРѕР±С‹С‚РёСЏ РЅР° {}, РґР»СЏ Р·Р°РїСЂРѕСЃР° СЃ id: {}", request.getStatus(), requestId);
         return RequestMapper.toRequestDto(requestRepository.save(request));
     }
 
     @Override
     @Transactional
     public EventFullDto getShortDtoById(Long eventId, HttpServletRequest request) {
-        log.info("Получение события с id {}", eventId);
+        log.info("РџРѕР»СѓС‡РµРЅРёРµ СЃРѕР±С‹С‚РёСЏ СЃ id {}", eventId);
         statsClient.postHit(
                 new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
                         LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
         );
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
         return toFullDto(event);
     }
 
@@ -310,7 +310,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private EventShortDto toShortDto(Event event) {
-        log.info("Конвертация события event: {} в формат EventShortDto", event);
+        log.info("РљРѕРЅРІРµСЂС‚Р°С†РёСЏ СЃРѕР±С‹С‚РёСЏ event: {} РІ С„РѕСЂРјР°С‚ EventShortDto", event);
         long confirmedRequests = requestRepository.findByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED).size();
         ViewStats viewStats = statsClient.getStats(
                 event.getId().intValue(),
@@ -323,7 +323,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private EventFullDto toFullDto(Event event) {
-        log.info("Конвертация события event: {} в формат EventFullDto", event);
+        log.info("РљРѕРЅРІРµСЂС‚Р°С†РёСЏ СЃРѕР±С‹С‚РёСЏ event: {} РІ С„РѕСЂРјР°С‚ EventFullDto", event);
         long confirmedRequests = requestRepository.findByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED).size();
         ViewStats viewStats = statsClient.getStats(
                 event.getId().intValue(),

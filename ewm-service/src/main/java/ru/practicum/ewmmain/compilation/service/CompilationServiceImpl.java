@@ -41,7 +41,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto getCompilationDtoById(Long id) {
-        log.info("Получение подборки по id {}", id);
+        log.info("РџРѕР»СѓС‡РµРЅРёРµ РїРѕРґР±РѕСЂРєРё РїРѕ id {}", id);
         Compilation compilation = compilationRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format("Compilation with id %s has not been found", id)));
         return modelMapper.map(compilation, CompilationDto.class);
@@ -50,18 +50,18 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto add(NewCompilationDto newCompilationDto) {
-        log.info("Добавление подборки: {}", newCompilationDto);
+        log.info("Р”РѕР±Р°РІР»РµРЅРёРµ РїРѕРґР±РѕСЂРєРё: {}", newCompilationDto);
         Compilation compilation = modelMapper.map(newCompilationDto, Compilation.class);
         Collection<Long> eventsList = newCompilationDto.getEvents();
         Collection<Event> events = new ArrayList<>();
         for (Long eventId : eventsList) {
             Event event = eventRepository.findById(eventId)
-                    .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                    .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
             events.add(event);
         }
         compilation.setEvents(events);
         if (compilation.getTitle() == null || compilation.getTitle().isBlank()) {
-            throw new BadRequestException("Пустое название подборки");
+            throw new BadRequestException("РџСѓСЃС‚РѕРµ РЅР°Р·РІР°РЅРёРµ РїРѕРґР±РѕСЂРєРё");
         }
         compilationRepository.save(compilation);
         return modelMapper.map(compilation, CompilationDto.class);
@@ -70,11 +70,11 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto addEventToCompilation(Long compilationId, Long eventId) {
-        log.info("Обновление события с id {} в подборке с id {}", eventId, compilationId);
+        log.info("РћР±РЅРѕРІР»РµРЅРёРµ СЃРѕР±С‹С‚РёСЏ СЃ id {} РІ РїРѕРґР±РѕСЂРєРµ СЃ id {}", eventId, compilationId);
         Compilation compilation = compilationRepository.findById(compilationId)
-                .orElseThrow(() -> new NotFoundException("В БД нет подборки с id" + compilationId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕРґР±РѕСЂРєРё СЃ id" + compilationId));
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
         Collection<Event> events = compilation.getEvents();
         events.add(event);
         compilation.setEvents(events);
@@ -85,19 +85,19 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public void deleteCompilation(Long compilationId) {
-        log.info("Удаление подборки с id {}", compilationId);
+        log.info("РЈРґР°Р»РµРЅРёРµ РїРѕРґР±РѕСЂРєРё СЃ id {}", compilationId);
         Compilation compilation = compilationRepository.findById(compilationId)
-                .orElseThrow(() -> new NotFoundException("В БД нет подборки с id" + compilationId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕРґР±РѕСЂРєРё СЃ id" + compilationId));
         compilationRepository.delete(compilation);
-        log.info("Подборка с id {} удалена", compilationId);
+        log.info("РџРѕРґР±РѕСЂРєР° СЃ id {} СѓРґР°Р»РµРЅР°", compilationId);
     }
 
     @Override
     @Transactional
     public CompilationDto pinCompilation(Long compilationId) {
-        log.info("Закрепление подборки с id {}", compilationId);
+        log.info("Р—Р°РєСЂРµРїР»РµРЅРёРµ РїРѕРґР±РѕСЂРєРё СЃ id {}", compilationId);
         Compilation compilation = compilationRepository.findById(compilationId)
-                .orElseThrow(() -> new NotFoundException("В БД нет подборки с id" + compilationId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕРґР±РѕСЂРєРё СЃ id" + compilationId));
         compilation.setPinned(true);
         compilationRepository.save(compilation);
         return modelMapper.map(compilation, CompilationDto.class);
@@ -107,9 +107,9 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public void deletePinCompilation(Long compilationId) {
-        log.info("Открепление подборки id {}", compilationId);
+        log.info("РћС‚РєСЂРµРїР»РµРЅРёРµ РїРѕРґР±РѕСЂРєРё id {}", compilationId);
         Compilation compilation = compilationRepository.findById(compilationId)
-                .orElseThrow(() -> new NotFoundException("В БД нет подборки с id" + compilationId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕРґР±РѕСЂРєРё СЃ id" + compilationId));
         compilation.setPinned(false);
         compilationRepository.save(compilation);
     }
@@ -117,15 +117,15 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public void deleteEventFromCompilation(Long compilationId, Long eventId) {
-        log.info("Удаление события id {} из подборки id {}", eventId, compilationId);
+        log.info("РЈРґР°Р»РµРЅРёРµ СЃРѕР±С‹С‚РёСЏ id {} РёР· РїРѕРґР±РѕСЂРєРё id {}", eventId, compilationId);
         Compilation compilation = compilationRepository.findById(compilationId)
-                .orElseThrow(() -> new NotFoundException("В БД нет подборки с id" + compilationId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕРґР±РѕСЂРєРё СЃ id" + compilationId));
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
         compilation.getEvents().remove(event);
         Collection<Event> events = compilation.getEvents();
         compilation.setEvents(events);
         compilationRepository.save(compilation);
-        log.info("Событие с id {} удалено из подборки с id {}", eventId, compilationId);
+        log.info("РЎРѕР±С‹С‚РёРµ СЃ id {} СѓРґР°Р»РµРЅРѕ РёР· РїРѕРґР±РѕСЂРєРё СЃ id {}", eventId, compilationId);
     }
 }

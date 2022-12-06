@@ -16,39 +16,39 @@ public class AdminCompilationsController {
 
     @PostMapping
     public CompilationDto createCompilation(@RequestBody NewCompilationDto newCompilationDto) {
-        log.info("Создание новой подборки событий: {}", newCompilationDto);
+        log.info("РЎРѕР·РґР°РЅРёРµ РЅРѕРІРѕР№ РїРѕРґР±РѕСЂРєРё СЃРѕР±С‹С‚РёР№: {}", newCompilationDto);
         return compilationService.add(newCompilationDto);
     }
 
     @DeleteMapping("/{compId}")
     public void deleteCompilation(@PathVariable Long compId) {
-        log.info("Удалена подборка событий {}", compId);
+        log.info("РЈРґР°Р»РµРЅР° РїРѕРґР±РѕСЂРєР° СЃРѕР±С‹С‚РёР№ {}", compId);
         compilationService.deleteCompilation(compId);
     }
 
     @DeleteMapping("/{compId}/events/{eventId}")
     public void deleteEventFromCompilation(@PathVariable Long compId,
                                            @PathVariable Long eventId) {
-        log.info("Удалено событие {} из подборки событий {}", eventId, compId);
+        log.info("РЈРґР°Р»РµРЅРѕ СЃРѕР±С‹С‚РёРµ {} РёР· РїРѕРґР±РѕСЂРєРё СЃРѕР±С‹С‚РёР№ {}", eventId, compId);
         compilationService.deleteEventFromCompilation(compId, eventId);
     }
 
     @PatchMapping("/{compId}/events/{eventId}")
     public CompilationDto addEventToCompilation(@PathVariable Long compId,
                                                 @PathVariable Long eventId) {
-        log.info("Добавлено событие {} в подборку событий {}", eventId, compId);
+        log.info("Р”РѕР±Р°РІР»РµРЅРѕ СЃРѕР±С‹С‚РёРµ {} РІ РїРѕРґР±РѕСЂРєСѓ СЃРѕР±С‹С‚РёР№ {}", eventId, compId);
         return compilationService.addEventToCompilation(compId, eventId);
     }
 
     @DeleteMapping("/{compId}/pin")
     public void delPinCompilation(@PathVariable Long compId) {
-        log.info("Подборка событий {} снята с публикации", compId);
+        log.info("РџРѕРґР±РѕСЂРєР° СЃРѕР±С‹С‚РёР№ {} СЃРЅСЏС‚Р° СЃ РїСѓР±Р»РёРєР°С†РёРё", compId);
         compilationService.deletePinCompilation(compId);
     }
 
     @PatchMapping("/{compId}/pin")
     public CompilationDto pinCompilation(@PathVariable Long compId) {
-        log.info("Подборка событий {} опубликована", compId);
-        return compilationService.pinCompilation(compId); // я тут запутался. Проверить что и где надо возвращать
+        log.info("РџРѕРґР±РѕСЂРєР° СЃРѕР±С‹С‚РёР№ {} РѕРїСѓР±Р»РёРєРѕРІР°РЅР°", compId);
+        return compilationService.pinCompilation(compId); // СЏ С‚СѓС‚ Р·Р°РїСѓС‚Р°Р»СЃСЏ. РџСЂРѕРІРµСЂРёС‚СЊ С‡С‚Рѕ Рё РіРґРµ РЅР°РґРѕ РІРѕР·РІСЂР°С‰Р°С‚СЊ
     }
 }

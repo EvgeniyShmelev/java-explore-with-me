@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll(List<Long> ids, int from, int size) {
-        log.info("Получение списка всех пользователей");
+        log.info("РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РІСЃРµС… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№");
         Pageable pageable = PageRequest.of(from, size);
         Collection<User> users = userRepository.findUsersByIdIn(ids, pageable);
         return users.stream()
@@ -41,26 +41,27 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto add(NewUserRequest newUserRequest) {
-        log.info("Добавление пользователя: {}", newUserRequest);
+        log.info("Р”РѕР±Р°РІР»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ: {}", newUserRequest);
         User user = modelMapper.map(newUserRequest, User.class);
         if (!StringUtils.hasText(user.getName())) {
-            throw new BadRequestException("Пустое имя.");
+            throw new BadRequestException("РџСѓСЃС‚РѕРµ РёРјСЏ.");
         }
         Optional<User> userOptional = userRepository.getUserByName(user.getName());
         if (userOptional.isPresent()) {
-            throw new ConflictException("Пользователь с именем " + user.getName() + "уже существует");
+            throw new ConflictException("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ РёРјРµРЅРµРј " + user.getName() + "СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
         }
         User newUser = userRepository.save(user);
-        log.info("Добавлен пользователь: {}", newUser);
+        log.info("Р”РѕР±Р°РІР»РµРЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ: {}", newUser);
         return modelMapper.map(newUser, UserDto.class);
     }
 
     @Override
     @Transactional
     public void deleteUser(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
-        log.info("Удаление пользователя с id: {}", userId);
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id " + userId);
+        }
+        log.info("РЈРґР°Р»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id: {}", userId);
         userRepository.deleteById(userId);
     }
 }

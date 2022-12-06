@@ -34,7 +34,7 @@ public class Event {
     @Embedded
     private Location location;
     @Column(name = "paid")
-    private Boolean paid; //платное мероприятие?
+    private Boolean paid; //РїР»Р°С‚РЅРѕРµ РјРµСЂРѕРїСЂРёСЏС‚РёРµ?
     @Column(name = "title", nullable = false, length = 120)
     private String title;
     @Column(name = "participant_limit")

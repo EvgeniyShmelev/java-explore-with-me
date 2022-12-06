@@ -33,18 +33,18 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public ParticipantRequestDto add(Long userId, Long eventId) {
         if (eventId == null) {
-            throw new BadRequestException("EventId не может быть null");
+            throw new BadRequestException("EventId РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ null");
         }
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id " + userId));
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("В БД нет события с id " + eventId));
-        log.info("Добавление запроса от пользователя с id {} на участие в событии с id {}", userId, eventId);
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ СЃРѕР±С‹С‚РёСЏ СЃ id " + eventId));
+        log.info("Р”РѕР±Р°РІР»РµРЅРёРµ Р·Р°РїСЂРѕСЃР° РѕС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id {} РЅР° СѓС‡Р°СЃС‚РёРµ РІ СЃРѕР±С‹С‚РёРё СЃ id {}", userId, eventId);
         Request newRequest = new Request(null, event, user, LocalDateTime.now(), RequestStatus.PENDING);
         if (!event.getRequestModeration()) {
             newRequest.setStatus(RequestStatus.CONFIRMED);
         }
-        log.info("Добавлен запрос {}", newRequest);
+        log.info("Р”РѕР±Р°РІР»РµРЅ Р·Р°РїСЂРѕСЃ {}", newRequest);
         return RequestMapper.toRequestDto(requestRepository.save(newRequest));
     }
 
@@ -52,8 +52,8 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public ParticipantRequestDto update(Long userId, Long requestId) {
         Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new NotFoundException("В БД нет запроса с id " + requestId));
-        log.info("Отмена запроса от пользователя с id {} на участие в событии с id {}", userId, requestId);
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ Р·Р°РїСЂРѕСЃР° СЃ id " + requestId));
+        log.info("РћС‚РјРµРЅР° Р·Р°РїСЂРѕСЃР° РѕС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id {} РЅР° СѓС‡Р°СЃС‚РёРµ РІ СЃРѕР±С‹С‚РёРё СЃ id {}", userId, requestId);
         request.setStatus(RequestStatus.CANCELED);
         return RequestMapper.toRequestDto(requestRepository.save(request));
     }
@@ -61,13 +61,13 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public List<ParticipantRequestDto> getAll(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("В БД нет пользователя с id " + userId));
-        log.info("Получение информации о заявках пользователя {} на участие в чужих событиях", userId);
+                .orElseThrow(() -> new NotFoundException("Р’ Р‘Р” РЅРµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id " + userId));
+        log.info("РџРѕР»СѓС‡РµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё Рѕ Р·Р°СЏРІРєР°С… РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ {} РЅР° СѓС‡Р°СЃС‚РёРµ РІ С‡СѓР¶РёС… СЃРѕР±С‹С‚РёСЏС…", userId);
         Collection<Request> requests = requestRepository.getAllByRequesterId(user.getId());
         List<ParticipantRequestDto> requestsDto = requests.stream()
                 .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
-        log.info("Список заявок: {} ", requestsDto);
+        log.info("РЎРїРёСЃРѕРє Р·Р°СЏРІРѕРє: {} ", requestsDto);
         return requestsDto;
     }
 }

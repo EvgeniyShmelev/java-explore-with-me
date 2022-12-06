@@ -27,9 +27,9 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public void addHit(HitDto hitDto) {
-        log.info("Сохранение данных статистки показов: {}", hitDto);
+        log.info("РЎРѕС…СЂР°РЅРµРЅРёРµ РґР°РЅРЅС‹С… СЃС‚Р°С‚РёСЃС‚РєРё РїРѕРєР°Р·РѕРІ: {}", hitDto);
         Hit hit = modelMapper.map(hitDto, Hit.class);
-        log.info("Маппинг DTO: {}", hit);
+        log.info("РњР°РїРїРёРЅРі DTO: {}", hit);
         statsRepository.save(hit);
     }
 
@@ -40,7 +40,7 @@ public class StatsServiceImpl implements StatsService {
         for (String u : encodedUris) {
             uris.add(URLDecoder.decode(u, StandardCharsets.UTF_8));
         }
-        log.info("Получение данных статистики для uri: {}", uris);
+        log.info("РџРѕР»СѓС‡РµРЅРёРµ РґР°РЅРЅС‹С… СЃС‚Р°С‚РёСЃС‚РёРєРё РґР»СЏ uri: {}", uris);
         Collection<Hit> hits = statsRepository.findDistinctHitsByUriInAndTimestampBetween(uris, start, end);
         Collection<ViewStats> viewStats = hits.stream()
                 .map(h -> StatsMapper.toViewStats(h, hits.size()))

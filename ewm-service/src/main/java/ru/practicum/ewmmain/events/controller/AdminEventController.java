@@ -30,26 +30,26 @@ public class AdminEventController {
                                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                                         @RequestParam(defaultValue = "0") int from,
                                                         @RequestParam(defaultValue = "10") int size) {
-        log.info("Получен запрос списка событий");
+        log.info("РџРѕР»СѓС‡РµРЅ Р·Р°РїСЂРѕСЃ СЃРїРёСЃРєР° СЃРѕР±С‹С‚РёР№");
         return eventService.getAllByAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
     @PutMapping("/{eventId}")
     public EventFullDto adminUpdateEventRequest(@PathVariable Long eventId,
                                                 @RequestBody AdminUpdateEventRequest adminUpdateEventRequest) {
-        log.info("Обновлено событие: id: {} event: {}", eventId, adminUpdateEventRequest);
+        log.info("РћР±РЅРѕРІР»РµРЅРѕ СЃРѕР±С‹С‚РёРµ: id: {} event: {}", eventId, adminUpdateEventRequest);
         return eventService.updateByAdmin(eventId, adminUpdateEventRequest);
     }
 
     @PatchMapping("/{eventId}/publish")
     public EventFullDto publishEvent(@PathVariable Long eventId) {
-        log.info("Команда на публикацию события: {}", eventId);
+        log.info("РљРѕРјР°РЅРґР° РЅР° РїСѓР±Р»РёРєР°С†РёСЋ СЃРѕР±С‹С‚РёСЏ: {}", eventId);
         return eventService.publishByAdmin(eventId);
     }
 
     @PatchMapping("/{eventId}/reject")
     public EventFullDto rejectEvent(@PathVariable Long eventId) {
-        log.info("Событие: {} отклонено", eventId);
+        log.info("РЎРѕР±С‹С‚РёРµ: {} РѕС‚РєР»РѕРЅРµРЅРѕ", eventId);
         return eventService.rejectDyAdmin(eventId);
     }
 }

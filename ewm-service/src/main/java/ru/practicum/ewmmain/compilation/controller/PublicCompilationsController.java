@@ -19,7 +19,7 @@ public class PublicCompilationsController {
 
     @GetMapping("/{compId}")
     public CompilationDto getCompilationById(@PathVariable Long compId) {
-        log.info("Получение подборки событий по id {}", compId);
+        log.info("РџРѕР»СѓС‡РµРЅРёРµ РїРѕРґР±РѕСЂРєРё СЃРѕР±С‹С‚РёР№ РїРѕ id {}", compId);
         return compilationService.getCompilationDtoById(compId);
     }
 
@@ -29,7 +29,7 @@ public class PublicCompilationsController {
                                                          @PositiveOrZero int from,
                                                          @RequestParam(required = false, defaultValue = "10")
                                                          @Positive int size) {
-        log.info("Получить подборки with pinned {}, from={}, size={}", pinned, from, size);
+        log.info("РџРѕР»СѓС‡РёС‚СЊ РїРѕРґР±РѕСЂРєРё with pinned {}, from={}, size={}", pinned, from, size);
         return compilationService.getAll(pinned, from, size);
     }
 }
