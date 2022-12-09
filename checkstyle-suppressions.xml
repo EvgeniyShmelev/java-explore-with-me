@@ -23,4 +23,7 @@
     <suppress checks="checkstyle"
               files="stats-server.src.main.java.ru.practicum.ewmstat.service.StatsServiceImpl.java"
               lines="1-9999"/>
+    <suppress checks="checkstyle"
+              files="ru.practicum.ewmmain.subscriptions.service.SubscriptionServiceImpl.java"
+              lines="1-9999"/>
 </suppressions>

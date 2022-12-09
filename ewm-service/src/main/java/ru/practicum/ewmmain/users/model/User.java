@@ -3,6 +3,7 @@ package ru.practicum.ewmmain.users.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -16,4 +17,11 @@ public class User {
     private String name;
     @Column(name = "email", nullable = false, length = 256)
     private String email;
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "user_friends",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "friend_id")}
+    )
+    private Set<User> friends;
 }
