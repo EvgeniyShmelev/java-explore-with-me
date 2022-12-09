@@ -309,6 +309,15 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<EventShortDto> getEventsUserCreatedOrJoined(Long id, int from, int size) {
+        log.info("Получение всех событий, добавленных пользователем с id {}", id);
+        List<Event> eventsCreated = eventRepository.findEventsByInitiatorId(id, PageRequest.of(from, size));
+        return eventsCreated.stream()
+                .map(this::toShortDto)
+                .collect(Collectors.toList());
+    }
+
     private EventShortDto toShortDto(Event event) {
         log.info("Конвертация события event: {} в формат EventShortDto", event);
         long confirmedRequests = requestRepository.findByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED).size();
