@@ -12,8 +12,6 @@ import ru.practicum.ewmmain.users.model.User;
 import ru.practicum.ewmmain.users.repository.UserRepository;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
