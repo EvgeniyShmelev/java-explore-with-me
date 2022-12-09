@@ -12,7 +12,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
 @RestController
-@RequestMapping(path = "/users/{id}/friends")
+@RequestMapping(path = "/users/{userId}/friends")
 @RequiredArgsConstructor
 @Slf4j
 public class SubscriptionController {
