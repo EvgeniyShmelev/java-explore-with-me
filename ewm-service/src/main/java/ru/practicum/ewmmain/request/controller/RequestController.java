@@ -2,6 +2,7 @@ package ru.practicum.ewmmain.request.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmain.request.dto.ParticipantRequestDto;
 import ru.practicum.ewmmain.request.service.RequestService;
@@ -12,6 +13,7 @@ import java.util.Collection;
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class RequestController {
     private final RequestService requestService;
 

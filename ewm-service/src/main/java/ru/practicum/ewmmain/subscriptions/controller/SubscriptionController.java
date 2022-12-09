@@ -2,6 +2,7 @@ package ru.practicum.ewmmain.subscriptions.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmain.events.dto.EventShortDto;
 import ru.practicum.ewmmain.subscriptions.service.SubscriptionService;
@@ -15,6 +16,7 @@ import java.util.Collection;
 @RequestMapping(path = "/users/{userId}/friends")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
